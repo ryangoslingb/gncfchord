@@ -1,20 +1,15 @@
 {
-  "short_name": "ChordShift",
-  "name": "ChordShift - Music Transpose",
+  "short_name": "GNCFLineUp",
+  "name": "GNCFMusicTeam",
+  "description": "Chord transpose and set list manager",
   "icons": [
     {
-      "src": "assets/icon/favicon.png",
+      "src": "favicon.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "assets/icon/icon.png",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "maskable"
+      "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#5c6bc0",
