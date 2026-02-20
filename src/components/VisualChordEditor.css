@@ -1,0 +1,179 @@
+/* Visual Chord Editor Styles */
+
+.visual-chord-editor {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+/* Editor toolbar tabs */
+.editor-toolbar {
+  display: flex;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 12px;
+}
+
+.toolbar-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--ion-color-medium);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toolbar-tab.active {
+  background: var(--ion-color-primary);
+  color: white;
+}
+
+/* Hint text */
+.hint-text {
+  text-align: center;
+  color: var(--ion-color-medium);
+  font-size: 13px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+/* Chord sheet edit mode */
+.chord-sheet-edit {
+  display: flex;
+  flex-direction: column;
+}
+
+.chord-sheet-textarea {
+  width: 100%;
+  min-height: 320px;
+  padding: 16px;
+  border: 1px solid var(--ion-border-color);
+  border-radius: 12px;
+  font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  background: var(--ion-item-background);
+  color: var(--ion-text-color);
+  resize: vertical;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.chord-sheet-textarea::placeholder {
+  color: var(--ion-color-medium);
+  opacity: 0.7;
+}
+
+.chord-sheet-textarea:focus {
+  outline: none;
+  border-color: var(--ion-color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.15);
+}
+
+/* Chord sheet preview */
+.chord-sheet-preview {
+  background: var(--ion-item-background);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 280px;
+  overflow-x: auto;
+}
+
+.empty-preview {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+}
+
+.empty-preview p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.preview-content {
+  font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+}
+
+.preview-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 6px;
+  min-height: 24px;
+}
+
+.preview-line.empty {
+  height: 24px;
+}
+
+.preview-line.chords-only {
+  margin-bottom: 4px;
+}
+
+.standalone-chord {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin-right: 16px;
+}
+
+/* Chord-word pair */
+.chord-word-pair {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 0;
+}
+
+.chord-above {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  line-height: 1.3;
+  min-height: 18px;
+}
+
+.word-below {
+  font-size: 16px;
+  color: var(--ion-text-color);
+  line-height: 1.4;
+}
+
+.lyric-segment {
+  font-size: 16px;
+  color: var(--ion-text-color);
+  line-height: 1.4;
+  white-space: pre;
+}
+
+.lyric-word {
+  font-size: 16px;
+  color: var(--ion-text-color);
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+  .chord-sheet-textarea {
+    font-size: 13px;
+    padding: 12px;
+  }
+  
+  .chord-above {
+    font-size: 12px;
+  }
+  
+  .word-below,
+  .lyric-segment,
+  .lyric-word {
+    font-size: 14px;
+  }
+}

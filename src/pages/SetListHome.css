@@ -1,0 +1,94 @@
+/* SetListHome Styles */
+
+.setlist-home-page {
+  --background: var(--ion-background-color);
+}
+
+.setlist-home-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.title-icon {
+  font-size: 1.3rem;
+}
+
+.setlist-home-content {
+  --padding-bottom: calc(80px + var(--ion-safe-area-bottom, 0px));
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  text-align: center;
+  padding: 24px;
+}
+
+.empty-icon {
+  font-size: 72px;
+  color: var(--ion-color-medium);
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-state h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.empty-state p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Set list items */
+.setlist-list {
+  background: transparent;
+  padding-bottom: calc(80px + var(--ion-safe-area-bottom, 0px));
+}
+
+.setlist-item {
+  --background: var(--ion-item-background);
+  --border-radius: 12px;
+  --min-height: 64px;
+  margin: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.setlist-name {
+  font-size: 1rem;
+  font-weight: 600 !important;
+}
+
+.setlist-date {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium) !important;
+}
+
+/* FAB */
+ion-fab[vertical="bottom"][horizontal="end"] {
+  right: calc(16px + var(--ion-safe-area-right, 0px));
+  bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .setlist-list {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .empty-state {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}

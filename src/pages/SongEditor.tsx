@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   IonPage,
   IonHeader,
@@ -10,22 +10,24 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonTextarea,
-  IonCard,
-  IonCardContent,
   IonIcon,
-  IonText,
   IonToast,
   IonBackButton,
+  IonSegment,
+  IonSegmentButton,
+  IonSelect,
+  IonSelectOption,
 } from "@ionic/react";
-import { save, informationCircleOutline } from "ionicons/icons";
+import { save } from "ionicons/icons";
 import { useHistory, useParams } from "react-router-dom";
-import { getSongById, saveSong, createSong } from "../utils/storage";
+import { getSongById, saveSong, createSong } from "../utils/firebaseStorage";
+import { SongCategory } from "../types";
+import VisualChordEditor, {
+  detectKey,
+  transposeText,
+  ALL_KEYS,
+} from "../components/VisualChordEditor";
 import "./SongEditor.css";
-
-const EXAMPLE = `[Am]Yesterday, [G]all my [C]troubles seemed so [F]far away
-[C]Now it [G]looks as though they're [Am]here to [F]stay
-[Dm]Oh I be[G]lieve in [C]yesterday`;
 
 const SongEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,24 +36,53 @@ const SongEditor: React.FC = () => {
 
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
+  const [category, setCategory] = useState<SongCategory>("praise");
   const [lyrics, setLyrics] = useState("");
+  const [currentKey, setCurrentKey] = useState("C");
+  const [originalKey, setOriginalKey] = useState("C");
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isNew) {
-      const song = getSongById(id);
-      if (song) {
-        setTitle(song.title);
-        setArtist(song.artist);
-        setLyrics(song.lyrics);
-      } else {
-        history.replace("/home");
-      }
+      const loadSong = async () => {
+        const song = await getSongById(id);
+        if (song) {
+          setTitle(song.title);
+          setArtist(song.artist);
+          setCategory(song.category || "other");
+          setLyrics(song.lyrics);
+          const detected = detectKey(song.lyrics);
+          setCurrentKey(detected);
+          setOriginalKey(detected);
+        } else {
+          history.replace("/home");
+        }
+      };
+      loadSong();
     }
   }, [id, isNew, history]);
 
-  const handleSave = () => {
+  // Handle key detected from chord editor
+  const handleKeyDetected = useCallback((detected: string) => {
+    setCurrentKey(detected);
+    setOriginalKey(detected);
+  }, []);
+
+  // Handle key change (transpose)
+  const handleKeyChange = useCallback(
+    (newKey: string) => {
+      if (newKey !== currentKey && lyrics.trim()) {
+        const transposed = transposeText(lyrics, currentKey, newKey);
+        setLyrics(transposed);
+        setCurrentKey(newKey);
+      }
+    },
+    [currentKey, lyrics],
+  );
+
+  const handleSave = async () => {
     if (!title.trim()) {
       setToastMsg("Please enter a song title.");
       setShowToast(true);
@@ -63,25 +94,31 @@ const SongEditor: React.FC = () => {
       return;
     }
 
-    if (isNew) {
-      const newSong = createSong(title, artist, lyrics);
-      saveSong(newSong);
-      history.replace(`/song/${newSong.id}`);
-    } else {
-      const existing = getSongById(id)!;
-      saveSong({
-        ...existing,
-        title: title.trim() || "Untitled Song",
-        artist: artist.trim(),
-        lyrics,
-        updatedAt: Date.now(),
-      });
-      history.goBack();
+    setSaving(true);
+    try {
+      if (isNew) {
+        const newSong = createSong(title, artist, lyrics, category);
+        await saveSong(newSong);
+        history.replace(`/song/${newSong.id}`);
+      } else {
+        const existing = await getSongById(id);
+        if (!existing) throw new Error("Song not found");
+        await saveSong({
+          ...existing,
+          title: title.trim() || "Untitled Song",
+          artist: artist.trim(),
+          category,
+          lyrics,
+          updatedAt: Date.now(),
+        });
+        history.goBack();
+      }
+    } catch (err) {
+      setToastMsg("Failed to save. Check your connection.");
+      setShowToast(true);
+    } finally {
+      setSaving(false);
     }
-  };
-
-  const insertExample = () => {
-    if (!lyrics.trim()) setLyrics(EXAMPLE);
   };
 
   return (
@@ -89,7 +126,7 @@ const SongEditor: React.FC = () => {
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/home" text="Back" />
+            <IonBackButton defaultHref="/home" text="" />
           </IonButtons>
           <IonTitle>{isNew ? "New Song" : "Edit Song"}</IonTitle>
           <IonButtons slot="end">
@@ -109,7 +146,7 @@ const SongEditor: React.FC = () => {
             <IonInput
               value={title}
               onIonInput={(e) => setTitle(e.detail.value ?? "")}
-              placeholder="e.g. Yesterday"
+              placeholder="e.g. How Great Is Our God"
               clearInput
             />
           </IonItem>
@@ -118,69 +155,68 @@ const SongEditor: React.FC = () => {
             <IonInput
               value={artist}
               onIonInput={(e) => setArtist(e.detail.value ?? "")}
-              placeholder="e.g. The Beatles"
+              placeholder="e.g. Chris Tomlin"
               clearInput
             />
           </IonItem>
         </div>
 
-        {/* Chord format guide */}
-        <IonCard className="guide-card">
-          <IonCardContent>
-            <div className="guide-header">
-              <IonIcon icon={informationCircleOutline} color="primary" />
-              <IonText color="primary">
-                <strong>Chord Notation Guide</strong>
-              </IonText>
-            </div>
-            <p className="guide-text">
-              Place chords inline using <code>[ChordName]</code> before the
-              syllable they belong to.
-            </p>
-            <div className="guide-example">
-              <span className="guide-raw">
-                [Am]Hello [G]world, [C]here I [F]am
-              </span>
-            </div>
-            <p className="guide-text guide-hint">
-              Supported: <code>Am</code> <code>C#</code> <code>Bb7</code>{" "}
-              <code>Fmaj7</code> <code>G/B</code> <code>Dsus4</code> — and all
-              standard chord notations.
-            </p>
-            {!lyrics.trim() && (
-              <IonButton fill="clear" size="small" onClick={insertExample}>
-                Load example lyrics
-              </IonButton>
-            )}
-          </IonCardContent>
-        </IonCard>
+        {/* Category selector */}
+        <div className="category-section">
+          <IonLabel className="category-label">Category *</IonLabel>
+          <IonSegment
+            value={category}
+            onIonChange={(e) => setCategory(e.detail.value as SongCategory)}
+            className="category-segment"
+          >
+            <IonSegmentButton value="praise">
+              <IonLabel>Praise</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="worship">
+              <IonLabel>Worship</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="other">
+              <IonLabel>Other</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        </div>
 
-        {/* Lyrics editor */}
-        <div className="editor-section">
-          <IonItem className="editor-item lyrics-item" lines="none">
-            <IonLabel position="stacked">Lyrics with Chords *</IonLabel>
-            <IonTextarea
-              value={lyrics}
-              onIonInput={(e) => setLyrics(e.detail.value ?? "")}
-              placeholder={"[Am]Hello [G]world\n[C]Enter your lyrics here..."}
-              autoGrow
-              rows={12}
-              className="lyrics-textarea"
-              spellcheck={false}
-              wrap="soft"
-            />
-          </IonItem>
+        {/* Visual Chord Editor */}
+        <div className="chord-editor-section">
+          <div className="section-header">
+            <IonLabel className="section-label">Lyrics with Chords *</IonLabel>
+            <div className="key-selector">
+              <span className="key-label">Key:</span>
+              <IonSelect
+                value={currentKey}
+                onIonChange={(e) => handleKeyChange(e.detail.value)}
+                interface="popover"
+                className="key-select"
+              >
+                {ALL_KEYS.map((key) => (
+                  <IonSelectOption key={key} value={key}>
+                    {key}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </div>
+          </div>
+          <VisualChordEditor
+            value={lyrics}
+            onChange={setLyrics}
+            onKeyDetected={handleKeyDetected}
+          />
         </div>
 
         <div className="save-btn-wrap">
           <IonButton
-            expand="block"
             onClick={handleSave}
             size="large"
             color="primary"
+            disabled={saving}
           >
             <IonIcon slot="start" icon={save} />
-            {isNew ? "Save Song" : "Update Song"}
+            {saving ? "Saving…" : isNew ? "Save Song" : "Update Song"}
           </IonButton>
         </div>
       </IonContent>

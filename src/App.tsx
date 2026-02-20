@@ -1,9 +1,17 @@
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
+import { AuthProvider } from "./contexts/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 import SongEditor from "./pages/SongEditor";
 import SongView from "./pages/SongView";
+import SetListHome from "./pages/SetListHome";
+import SetListEditor from "./pages/SetListEditor";
+import SetListView from "./pages/SetListView";
+import SetListPlay from "./pages/SetListPlay";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -39,22 +47,47 @@ setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/home">
-          <Home />
-        </Route>
-        <Route exact path="/editor/:id">
-          <SongEditor />
-        </Route>
-        <Route exact path="/song/:id">
-          <SongView />
-        </Route>
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
-      </IonRouterOutlet>
-    </IonReactRouter>
+    <AuthProvider>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          {/* Public Routes */}
+          <Route exact path="/login">
+            <Login />
+          </Route>
+          <Route exact path="/register">
+            <Register />
+          </Route>
+
+          {/* Protected Routes */}
+          <PrivateRoute exact path="/home">
+            <Home />
+          </PrivateRoute>
+          <PrivateRoute exact path="/editor/:id">
+            <SongEditor />
+          </PrivateRoute>
+          <PrivateRoute exact path="/song/:id">
+            <SongView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/setlists">
+            <SetListHome />
+          </PrivateRoute>
+          <PrivateRoute exact path="/setlist-editor/:id">
+            <SetListEditor />
+          </PrivateRoute>
+          <PrivateRoute exact path="/setlist/:id">
+            <SetListView />
+          </PrivateRoute>
+          <PrivateRoute exact path="/setlist-play/:id/:songIndex?">
+            <SetListPlay />
+          </PrivateRoute>
+
+          {/* Default redirect */}
+          <Route exact path="/">
+            <Redirect to="/home" />
+          </Route>
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </AuthProvider>
   </IonApp>
 );
 

@@ -31,7 +31,7 @@ import {
   keyToSemitone,
   semitoneDiff,
 } from "../utils/chordTransposer";
-import { getSongById } from "../utils/storage";
+import { getSongById } from "../utils/firebaseStorage";
 import { Song } from "../types";
 import "./SongView.css";
 
@@ -118,21 +118,24 @@ const SongView: React.FC = () => {
 
   // Load song
   useEffect(() => {
-    const s = getSongById(id);
-    if (s) {
-      setSong(s);
-      const origKey = detectKey(s.lyrics);
-      const origSemitone = keyToSemitone(origKey);
-      setUseFlats(autoFlats(origSemitone));
-    } else {
-      history.replace("/home");
-    }
+    const load = async () => {
+      const s = await getSongById(id);
+      if (s) {
+        setSong(s);
+        const origKey = detectKey(s.lyrics);
+        const origSemitone = keyToSemitone(origKey);
+        setUseFlats(autoFlats(origSemitone));
+      } else {
+        history.replace("/home");
+      }
+    };
+    load();
   }, [id, history]);
 
   // Reload when returning from editor
   useEffect(() => {
-    const unlisten = history.listen(() => {
-      const s = getSongById(id);
+    const unlisten = history.listen(async () => {
+      const s = await getSongById(id);
       if (s) setSong(s);
     });
     return unlisten;
