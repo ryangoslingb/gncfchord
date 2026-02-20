@@ -1,0 +1,124 @@
+/* ── Page background ─────────────────── */
+.editor-content {
+  --background: var(--ion-color-light, #f4f5f8);
+  --padding-bottom: calc(20px + var(--ion-safe-area-bottom, 0px));
+}
+
+/* ── Sections ────────────────────────── */
+.editor-section {
+  background: var(--ion-background-color, #fff);
+  border-radius: 12px;
+  margin: 16px 12px 0;
+  margin-left: calc(12px + var(--ion-safe-area-left, 0px));
+  margin-right: calc(12px + var(--ion-safe-area-right, 0px));
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.editor-item {
+  --background: transparent;
+  --min-height: 56px;
+}
+
+/* ── Guide card ──────────────────────── */
+.guide-card {
+  margin: 16px 12px 0;
+  margin-left: calc(12px + var(--ion-safe-area-left, 0px));
+  margin-right: calc(12px + var(--ion-safe-area-right, 0px));
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.guide-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.guide-text {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium-shade);
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.guide-hint {
+  margin-top: 6px;
+}
+
+.guide-example {
+  background: var(--ion-color-light, #f4f5f8);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  overflow-x: auto;
+}
+
+.guide-raw {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.82rem;
+  color: var(--ion-color-primary);
+  white-space: nowrap;
+}
+
+code {
+  font-family: "Courier New", Courier, monospace;
+  background: var(--ion-color-light-shade, #e5e8ee);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 0.82rem;
+}
+
+/* ── Lyrics textarea ─────────────────── */
+.lyrics-item {
+  align-items: flex-start;
+}
+
+.lyrics-textarea {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  --padding-top: 8px;
+  width: 100%;
+  min-height: 200px;
+}
+
+/* ── Save button ─────────────────────── */
+.save-btn-wrap {
+  padding: 20px 12px 40px;
+  padding-left: calc(12px + var(--ion-safe-area-left, 0px));
+  padding-right: calc(12px + var(--ion-safe-area-right, 0px));
+  padding-bottom: calc(40px + var(--ion-safe-area-bottom, 0px));
+}
+
+/* ── Responsive adjustments ───────────── */
+@media (max-width: 360px) {
+  .guide-text {
+    font-size: 0.8rem;
+  }
+
+  .guide-raw {
+    font-size: 0.75rem;
+  }
+
+  code {
+    font-size: 0.75rem;
+  }
+
+  .lyrics-textarea {
+    font-size: 0.85rem;
+  }
+}
+
+/* Tablet / larger screens */
+@media (min-width: 768px) {
+  .editor-section,
+  .guide-card,
+  .save-btn-wrap {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

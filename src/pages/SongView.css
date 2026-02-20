@@ -1,0 +1,413 @@
+/* SongView Styles - Modern Dark/Light Theme */
+
+/* ===== Theme Variables ===== */
+.song-view-page.dark-mode {
+  --sv-bg: #0d1117;
+  --sv-surface: #161b22;
+  --sv-surface-elevated: #21262d;
+  --sv-border: #30363d;
+  --sv-text-primary: #e6edf3;
+  --sv-text-secondary: #8b949e;
+  --sv-text-muted: #6e7681;
+  --sv-accent: #58a6ff;
+  --sv-accent-soft: rgba(88, 166, 255, 0.15);
+  --sv-chord-color: #79c0ff;
+  --sv-section-color: #ffa657;
+  --sv-btn-bg: #21262d;
+  --sv-btn-hover: #30363d;
+  --sv-btn-active: #58a6ff;
+  --sv-header-bg: #161b22;
+  --sv-toolbar-bg: #161b22;
+}
+
+.song-view-page.light-mode {
+  --sv-bg: #ffffff;
+  --sv-surface: #f6f8fa;
+  --sv-surface-elevated: #ffffff;
+  --sv-border: #d0d7de;
+  --sv-text-primary: #1f2328;
+  --sv-text-secondary: #57606a;
+  --sv-text-muted: #6e7781;
+  --sv-accent: #0969da;
+  --sv-accent-soft: rgba(9, 105, 218, 0.1);
+  --sv-chord-color: #0550ae;
+  --sv-section-color: #bf5700;
+  --sv-btn-bg: #f6f8fa;
+  --sv-btn-hover: #eaeef2;
+  --sv-btn-active: #0969da;
+  --sv-header-bg: #ffffff;
+  --sv-toolbar-bg: #f6f8fa;
+}
+
+/* ===== Page Structure ===== */
+.song-view-page {
+  --background: var(--sv-bg);
+}
+
+.song-view-header ion-toolbar {
+  --background: var(--sv-header-bg);
+  --color: var(--sv-text-primary);
+  --border-color: var(--sv-border);
+  border-bottom: 1px solid var(--sv-border);
+}
+
+.song-view-header ion-back-button {
+  --color: var(--sv-text-primary);
+}
+
+.song-view-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--sv-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.theme-toggle-btn {
+  --color: var(--sv-text-secondary);
+}
+
+/* ===== Transpose Controls ===== */
+.transpose-controls {
+  background: var(--sv-surface);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sv-border);
+}
+
+.transpose-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.current-key-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.current-key-label {
+  font-size: 12px;
+  color: var(--sv-text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.current-key-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--sv-accent);
+}
+
+.semitone-shift {
+  font-size: 13px;
+  color: var(--sv-text-secondary);
+  background: var(--sv-accent-soft);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.transpose-step-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.step-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--sv-border);
+  background: var(--sv-btn-bg);
+  color: var(--sv-text-primary);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.step-btn:active {
+  transform: scale(0.95);
+  background: var(--sv-btn-hover);
+}
+
+.step-btn.minus {
+  color: var(--sv-text-secondary);
+}
+
+.step-btn.plus {
+  background: var(--sv-accent);
+  color: white;
+  border-color: var(--sv-accent);
+}
+
+/* ===== Keys Grid ===== */
+.keys-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.key-btn {
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--sv-border);
+  background: var(--sv-btn-bg);
+  color: var(--sv-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.key-btn:active {
+  transform: scale(0.95);
+}
+
+.key-btn.active {
+  background: var(--sv-accent);
+  color: white;
+  border-color: var(--sv-accent);
+  box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);
+}
+
+/* ===== Content Area ===== */
+.song-view-content {
+  --background: var(--sv-bg);
+}
+
+.song-artist {
+  text-align: center;
+  padding: 16px 16px 8px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--sv-text-secondary);
+}
+
+/* ===== Lyrics Container ===== */
+.lyrics-container {
+  padding: 16px;
+  padding-left: calc(16px + var(--ion-safe-area-left, 0px));
+  padding-right: calc(16px + var(--ion-safe-area-right, 0px));
+  line-height: 1.7;
+  font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+  min-height: 100%;
+}
+
+/* Plain text line */
+.lyrics-plain-line {
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--sv-text-primary);
+}
+
+/* Section markers [Intro], [Verse], [Chorus] */
+.section-marker {
+  color: var(--sv-section-color) !important;
+  font-weight: 700;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+}
+
+/* Line with chords */
+.lyrics-chord-line {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  align-items: flex-end;
+}
+
+.chord-pair {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  vertical-align: bottom;
+}
+
+.chord-label {
+  color: var(--sv-chord-color);
+  font-weight: 700;
+  white-space: pre;
+  line-height: 1.4;
+  min-width: 1ch;
+  font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+}
+
+.chord-text {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: var(--sv-text-primary);
+}
+
+/* ===== Bottom Toolbar ===== */
+.bottom-bar {
+  background: var(--sv-toolbar-bg);
+  border-top: 1px solid var(--sv-border);
+}
+
+.bottom-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 12px;
+  padding-bottom: calc(8px + var(--ion-safe-area-bottom, 0px));
+  gap: 4px;
+}
+
+.bar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 14px;
+  min-width: 52px;
+  border-radius: 10px;
+  border: 1px solid var(--sv-border);
+  background: var(--sv-btn-bg);
+  color: var(--sv-text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bar-btn ion-icon {
+  font-size: 18px;
+}
+
+.bar-btn:active {
+  transform: scale(0.95);
+  background: var(--sv-btn-hover);
+}
+
+.bar-btn.active {
+  background: var(--sv-accent);
+  color: white;
+  border-color: var(--sv-accent);
+}
+
+.bar-btn .font-icon {
+  font-weight: 700;
+  font-family: "Georgia", serif;
+}
+
+.bar-btn .font-icon.small {
+  font-size: 14px;
+}
+
+.bar-btn .font-icon.large {
+  font-size: 20px;
+}
+
+/* ===== Responsive: Mobile ===== */
+@media (max-width: 400px) {
+  .keys-grid {
+    gap: 4px;
+  }
+
+  .key-btn {
+    height: 32px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .step-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .bar-btn {
+    padding: 6px 10px;
+    min-width: 46px;
+  }
+
+  .bar-btn span {
+    display: none;
+  }
+
+  .bar-btn ion-icon {
+    font-size: 20px;
+  }
+
+  .current-key-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 360px) {
+  .keys-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .song-view-title {
+    max-width: 140px;
+  }
+}
+
+/* ===== Tablet / Desktop ===== */
+@media (min-width: 768px) {
+  .transpose-controls {
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 0 0 16px 16px;
+    border-left: 1px solid var(--sv-border);
+    border-right: 1px solid var(--sv-border);
+  }
+
+  .keys-grid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 8px;
+  }
+
+  .key-btn {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .lyrics-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .bottom-bar-inner {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .song-view-title {
+    max-width: 400px;
+  }
+}
+
+/* ===== Dark mode active key shadow ===== */
+.song-view-page.dark-mode .key-btn.active {
+  box-shadow: 0 2px 12px rgba(88, 166, 255, 0.4);
+}
+
+.song-view-page.light-mode .key-btn.active {
+  box-shadow: 0 2px 8px rgba(9, 105, 218, 0.3);
+}
+
+/* ===== Smooth transitions ===== */
+.song-view-page,
+.transpose-controls,
+.song-view-content,
+.bottom-bar,
+.key-btn,
+.bar-btn,
+.step-btn {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}

@@ -1,2 +1,95 @@
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
+/* ChordShift – Modern Theme System */
+
+:root {
+  /* Primary: Blue accent for actions */
+  --ion-color-primary: #0969da;
+  --ion-color-primary-rgb: 9, 105, 218;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0858bf;
+  --ion-color-primary-tint: #2278de;
+
+  --ion-color-secondary: #1f883d;
+  --ion-color-secondary-rgb: 31, 136, 61;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #1c7736;
+  --ion-color-secondary-tint: #359451;
+
+  --ion-color-success: #1a7f37;
+  --ion-color-warning: #9a6700;
+  --ion-color-danger: #cf222e;
+  --ion-color-medium: #656d76;
+  --ion-color-light: #f6f8fa;
+
+  /* Light mode defaults */
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #1f2328;
+  --ion-text-color-rgb: 31, 35, 40;
+  --ion-toolbar-background: #ffffff;
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+  --ion-border-color: #d0d7de;
+
+  /* Font */
+  --ion-font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Roboto", system-ui,
+    sans-serif;
+
+  /* Safe area insets for notched phones */
+  --ion-safe-area-top: env(safe-area-inset-top);
+  --ion-safe-area-bottom: env(safe-area-inset-bottom);
+  --ion-safe-area-left: env(safe-area-inset-left);
+  --ion-safe-area-right: env(safe-area-inset-right);
+}
+
+/* Dark mode overrides (system preference) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-color-primary: #58a6ff;
+    --ion-color-primary-rgb: 88, 166, 255;
+
+    --ion-background-color: #0d1117;
+    --ion-background-color-rgb: 13, 17, 23;
+    --ion-text-color: #e6edf3;
+    --ion-text-color-rgb: 230, 237, 243;
+    --ion-toolbar-background: #161b22;
+    --ion-item-background: #161b22;
+    --ion-card-background: #161b22;
+    --ion-border-color: #30363d;
+    --ion-color-light: #21262d;
+    --ion-color-light-shade: #30363d;
+    --ion-color-medium: #8b949e;
+  }
+}
+
+/* ── Global responsive utilities ─────── */
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  -webkit-user-drag: none;
+}
+
+/* Prevent pull-to-refresh on iOS */
+ion-content {
+  --overflow: auto;
+  overscroll-behavior-y: contain;
+}
+
+/* Ensure minimum touch target size */
+ion-button,
+ion-item,
+ion-fab-button {
+  min-height: 44px;
+}
+
+/* Smooth scrolling */
+ion-content::part(scroll) {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
