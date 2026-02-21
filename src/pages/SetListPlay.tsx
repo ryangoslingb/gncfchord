@@ -209,7 +209,6 @@ const SetListPlay: React.FC = () => {
       const effectiveSemitone =
         (((keyToSemitone(origKey) + savedShift) % 12) + 12) % 12;
       setUseFlats(autoFlats(effectiveSemitone));
-      setTransposeVisible(true);
 
       // Scroll to top
       contentRef.current?.scrollToTop(300);
