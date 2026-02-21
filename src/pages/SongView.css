@@ -69,11 +69,26 @@
   --color: var(--sv-text-secondary);
 }
 
+/* ===== Transpose Controls wrapper (collapsible) ===== */
+.transpose-controls-wrapper {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: var(--sv-surface);
+  border-bottom: 1px solid var(--sv-border);
+}
+
+.transpose-controls-wrapper.expanded {
+  max-height: 200px;
+}
+
+.transpose-controls-wrapper.collapsed {
+  max-height: 32px; /* just enough for the handle */
+}
+
 /* ===== Transpose Controls ===== */
 .transpose-controls {
   background: var(--sv-surface);
   padding: 12px 16px;
-  border-bottom: 1px solid var(--sv-border);
 }
 
 .transpose-top-row {
@@ -147,7 +162,54 @@
   border-color: var(--sv-accent);
 }
 
-/* ===== Keys Grid ===== */
+/* Collapse button (hide panel) */
+.collapse-btn {
+  color: var(--sv-text-muted) !important;
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.collapse-btn:active {
+  background: var(--sv-btn-hover) !important;
+}
+
+/* Collapsed handle — sits above the controls so it's visible when clipped */
+.transpose-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: pan-y;
+  background: var(--sv-surface);
+  border-bottom: 1px solid var(--sv-border);
+}
+
+.handle-key-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sv-accent);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.handle-chevron {
+  font-size: 14px;
+  color: var(--sv-text-muted);
+}
+
+/* Hide handle when expanded, show when collapsed */
+.transpose-controls-wrapper.expanded .transpose-handle {
+  display: none;
+}
+
+.transpose-controls-wrapper.collapsed .transpose-controls {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .keys-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -355,12 +417,16 @@
 
 /* ===== Tablet / Desktop ===== */
 @media (min-width: 768px) {
-  .transpose-controls {
+  .transpose-controls-wrapper {
     max-width: 600px;
     margin: 0 auto;
     border-radius: 0 0 16px 16px;
     border-left: 1px solid var(--sv-border);
     border-right: 1px solid var(--sv-border);
+  }
+
+  .transpose-controls-wrapper.expanded {
+    max-height: 160px;
   }
 
   .keys-grid {
@@ -400,6 +466,7 @@
 
 /* ===== Smooth transitions ===== */
 .song-view-page,
+.transpose-controls-wrapper,
 .transpose-controls,
 .song-view-content,
 .bottom-bar,
@@ -410,4 +477,11 @@
     background-color 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease;
+}
+
+.transpose-controls-wrapper {
+  transition:
+    max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 }

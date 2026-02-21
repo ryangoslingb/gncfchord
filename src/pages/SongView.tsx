@@ -21,6 +21,8 @@ import {
   playOutline,
   pauseOutline,
   textOutline,
+  chevronDownOutline,
+  chevronUpOutline,
 } from "ionicons/icons";
 import { useHistory, useParams } from "react-router-dom";
 import {
@@ -115,6 +117,19 @@ const SongView: React.FC = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [autoScroll, setAutoScroll] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [transposeVisible, setTransposeVisible] = useState(true);
+
+  // Swipe-up gesture on the collapsed handle
+  const swipeTouchStartY = useRef<number | null>(null);
+  const handleSwipeTouchStart = (e: React.TouchEvent) => {
+    swipeTouchStartY.current = e.touches[0].clientY;
+  };
+  const handleSwipeTouchEnd = (e: React.TouchEvent) => {
+    if (swipeTouchStartY.current === null) return;
+    const delta = swipeTouchStartY.current - e.changedTouches[0].clientY;
+    if (delta > 30) setTransposeVisible(true); // swipe up
+    swipeTouchStartY.current = null;
+  };
 
   // Load song
   useEffect(() => {
@@ -272,37 +287,59 @@ const SongView: React.FC = () => {
       </IonHeader>
 
       {/* Transpose Controls */}
-      <div className="transpose-controls">
-        <div className="transpose-top-row">
-          <div className="current-key-display">
-            <span className="current-key-label">Key</span>
-            <span className="current-key-value">{currentKeyName}</span>
-            {semitoneShift !== 0 && (
-              <span className="semitone-shift">
-                {semitoneShift > 0 ? "+" : ""}
-                {semitoneShift}
-              </span>
-            )}
-          </div>
-          <div className="transpose-step-btns">
-            <button className="step-btn minus" onClick={() => shift(-1)}>
-              <IonIcon icon={removeOutline} />
-            </button>
-            <button className="step-btn plus" onClick={() => shift(1)}>
-              <IonIcon icon={addOutline} />
-            </button>
-          </div>
+      <div
+        className={`transpose-controls-wrapper ${transposeVisible ? "expanded" : "collapsed"}`}
+      >
+        {/* Collapsed handle — sits at top, visible when panel is hidden */}
+        <div
+          className="transpose-handle"
+          onTouchStart={handleSwipeTouchStart}
+          onTouchEnd={handleSwipeTouchEnd}
+          onClick={() => setTransposeVisible(true)}
+          title="Swipe up or tap to show transpose"
+        >
+          <span className="handle-key-hint">KEY&nbsp;{currentKeyName}</span>
+          <IonIcon icon={chevronDownOutline} className="handle-chevron" />
         </div>
-        <div className="keys-grid">
-          {ALL_KEYS.map((key) => (
-            <button
-              key={key}
-              className={`key-btn ${isKeyActive(key) ? "active" : ""}`}
-              onClick={() => handleKeySelect(key)}
-            >
-              {key}
-            </button>
-          ))}
+        <div className="transpose-controls">
+          <div className="transpose-top-row">
+            <div className="current-key-display">
+              <span className="current-key-label">Key</span>
+              <span className="current-key-value">{currentKeyName}</span>
+              {semitoneShift !== 0 && (
+                <span className="semitone-shift">
+                  {semitoneShift > 0 ? "+" : ""}
+                  {semitoneShift}
+                </span>
+              )}
+            </div>
+            <div className="transpose-step-btns">
+              <button className="step-btn minus" onClick={() => shift(-1)}>
+                <IonIcon icon={removeOutline} />
+              </button>
+              <button className="step-btn plus" onClick={() => shift(1)}>
+                <IonIcon icon={addOutline} />
+              </button>
+              <button
+                className="step-btn collapse-btn"
+                onClick={() => setTransposeVisible(false)}
+                title="Hide transpose panel"
+              >
+                <IonIcon icon={chevronUpOutline} />
+              </button>
+            </div>
+          </div>
+          <div className="keys-grid">
+            {ALL_KEYS.map((key) => (
+              <button
+                key={key}
+                className={`key-btn ${isKeyActive(key) ? "active" : ""}`}
+                onClick={() => handleKeySelect(key)}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -140,23 +140,125 @@ export function semitoneDiff(from: string, to: string): number {
   return (b - a + 12) % 12;
 }
 
-/** Detect the most-common root note in a lyrics string */
+// ───────────────────────────────────────────────────────────
+//  Key detection helpers
+// ───────────────────────────────────────────────────────────
+
+// Strict chord token pattern – excludes section markers like [Verse], [Chorus], [Bridge]
+const CHORD_TOKEN_RE =
+  /^[A-G][#b]?(?:m|maj|min|dim|aug|sus|add|7|9|11|13|6|2|4|\/[A-G][#b]?)*$/;
+
+function isChordToken(token: string): boolean {
+  return CHORD_TOKEN_RE.test(token);
+}
+
+// Enharmonic normalisation (sharp canonical form for comparison)
+const ENHARMONIC: Record<string, string> = {
+  Db: "C#",
+  "D#": "Eb",
+  Gb: "F#",
+  "G#": "Ab",
+  "A#": "Bb",
+};
+function normalizeNote(note: string): string {
+  return ENHARMONIC[note] ?? note;
+}
+
+// Key signatures: diatonic chords (I ii iii IV V vi) for each major key
+const KEY_SIGNATURES: Record<string, string[]> = {
+  C: ["C", "Dm", "Em", "F", "G", "Am"],
+  G: ["G", "Am", "Bm", "C", "D", "Em"],
+  D: ["D", "Em", "F#m", "G", "A", "Bm"],
+  A: ["A", "Bm", "C#m", "D", "E", "F#m"],
+  E: ["E", "F#m", "G#m", "A", "B", "C#m"],
+  B: ["B", "C#m", "D#m", "E", "F#", "G#m"],
+  "F#": ["F#", "G#m", "A#m", "B", "C#", "D#m"],
+  F: ["F", "Gm", "Am", "Bb", "C", "Dm"],
+  Bb: ["Bb", "Cm", "Dm", "Eb", "F", "Gm"],
+  Eb: ["Eb", "Fm", "Gm", "Ab", "Bb", "Cm"],
+  Ab: ["Ab", "Bbm", "Cm", "Db", "Eb", "Fm"],
+  Db: ["Db", "Ebm", "Fm", "Gb", "Ab", "Bbm"],
+};
+
+/**
+ * Detect the key of a lyrics string using key-signature scoring.
+ * Filters out section markers ([Verse], [Chorus], [Bridge], …) so they
+ * don't pollute the chord frequency count.
+ */
 export function detectKey(lyrics: string): string {
-  const matches = lyrics.match(/\[([^\]]+)\]/g);
-  if (!matches) return "C";
-  const freq: Record<string, number> = {};
-  for (const m of matches) {
-    const chord = m.slice(1, -1);
-    const parsed = parseRoot(chord);
-    if (parsed) freq[parsed.root] = (freq[parsed.root] ?? 0) + 1;
+  // Collect only real chord tokens from [Chord] notation
+  const foundChords: string[] = [];
+  const bracketRe = /\[([^\]]+)\]/g;
+  let m: RegExpExecArray | null;
+  while ((m = bracketRe.exec(lyrics)) !== null) {
+    const inner = m[1];
+    if (isChordToken(inner)) foundChords.push(inner);
   }
-  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
-  return sorted.length > 0 ? sorted[0][0] : "C";
+
+  // Also check bare chord lines (chord-over-lyrics format)
+  const BARE_CHORD_LINE_RE =
+    /^(?:\s*[A-G][#b]?(?:m|maj|min|dim|aug|sus|add|7|9|11|13|6|2|4)*\s+){2,}[A-G][#b]?(?:m|maj|min|dim|aug|sus|add|7|9|11|13|6|2|4)*\s*$/;
+  for (const line of lyrics.split("\n")) {
+    if (BARE_CHORD_LINE_RE.test(line)) {
+      for (const token of line.trim().split(/\s+/)) {
+        if (isChordToken(token)) foundChords.push(token);
+      }
+    }
+  }
+
+  if (foundChords.length === 0) return "C";
+
+  // Score each candidate key against the found chords
+  let bestKey = "C";
+  let bestScore = -1;
+
+  for (const [key, keyChords] of Object.entries(KEY_SIGNATURES)) {
+    let score = 0;
+
+    for (const chord of foundChords) {
+      const p = parseRoot(chord);
+      if (!p) continue;
+      const normRoot = normalizeNote(p.root);
+      const normChord = normRoot + p.rest;
+
+      for (const kc of keyChords) {
+        const kp = parseRoot(kc);
+        if (!kp) continue;
+        const kcNormRoot = normalizeNote(kp.root);
+        const kcNormChord = kcNormRoot + kp.rest;
+        if (normChord === kcNormChord || normRoot === kcNormRoot) {
+          score++;
+          break;
+        }
+      }
+    }
+
+    // Strong bonus when the first chord is the key's tonic (very common in worship songs)
+    if (foundChords.length > 0) {
+      const fp = parseRoot(foundChords[0]);
+      if (fp && normalizeNote(fp.root) === normalizeNote(key)) score += 3;
+    }
+
+    // Smaller bonus when the last chord is the tonic (final resolution)
+    if (foundChords.length > 1) {
+      const lp = parseRoot(foundChords[foundChords.length - 1]);
+      if (lp && normalizeNote(lp.root) === normalizeNote(key)) score += 1;
+    }
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestKey = key;
+    }
+  }
+
+  return bestKey;
 }
 
 /** Return semitone index (0-11) for a note name */
 export function keyToSemitone(key: string): number {
-  return ((noteIndex(key) % 12) + 12) % 12;
+  const idx = noteIndex(key);
+  if (idx === -1) return 0; // safe fallback to C instead of wrapping -1 → 11
+  return idx % 12;
 }
 
 // ───────────────────────────────────────────────────────────

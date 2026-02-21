@@ -23,6 +23,8 @@ import {
   chevronBackOutline,
   chevronForwardOutline,
   listOutline,
+  chevronUpOutline,
+  chevronDownOutline,
 } from "ionicons/icons";
 import { useHistory, useParams, useLocation } from "react-router-dom";
 import {
@@ -113,13 +115,34 @@ const SetListPlay: React.FC = () => {
   const [setList, setSetList] = useState<SetList | null>(null);
   const [songMap, setSongMap] = useState<Record<string, Song>>({});
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [semitoneShift, setSemitoneShift] = useState(0);
+  // Per-song semitone shifts keyed by playlist index - persists across navigation
+  const [songShifts, setSongShifts] = useState<Record<number, number>>({});
   const [useFlats, setUseFlats] = useState(false);
+
+  // Helper: get shift for current song (default 0)
+  const semitoneShift = songShifts[currentIndex] ?? 0;
+
+  const setSemitoneShift = (shift: number) => {
+    setSongShifts((prev) => ({ ...prev, [currentIndex]: shift }));
+  };
   const [fontSize, setFontSize] = useState(18);
   const [darkMode, setDarkMode] = useState(true);
   const [autoScroll, setAutoScroll] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showSongList, setShowSongList] = useState(false);
+  const [transposeVisible, setTransposeVisible] = useState(true);
+
+  // Swipe-up on the collapsed handle to restore panel
+  const transposeTouchStartY = useRef<number | null>(null);
+  const handleTransposeTouchStart = (e: React.TouchEvent) => {
+    transposeTouchStartY.current = e.touches[0].clientY;
+  };
+  const handleTransposeTouchEnd = (e: React.TouchEvent) => {
+    if (transposeTouchStartY.current === null) return;
+    const delta = transposeTouchStartY.current - e.changedTouches[0].clientY;
+    if (delta > 30) setTransposeVisible(true);
+    transposeTouchStartY.current = null;
+  };
 
   // Build flat playlist from sections
   const playlist = useMemo((): PlaylistSong[] => {
@@ -178,13 +201,15 @@ const SetListPlay: React.FC = () => {
     }
   }, [songIndex]);
 
-  // Reset transpose when song changes
+  // When song changes, sync useFlats to the saved key (or original if not yet set)
   useEffect(() => {
     if (currentSong) {
-      setSemitoneShift(0);
       const origKey = detectKey(currentSong.song.lyrics);
-      const origSemitone = keyToSemitone(origKey);
-      setUseFlats(autoFlats(origSemitone));
+      const savedShift = songShifts[currentIndex] ?? 0;
+      const effectiveSemitone =
+        (((keyToSemitone(origKey) + savedShift) % 12) + 12) % 12;
+      setUseFlats(autoFlats(effectiveSemitone));
+      setTransposeVisible(true);
 
       // Scroll to top
       contentRef.current?.scrollToTop(300);
@@ -373,44 +398,68 @@ const SetListPlay: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      {/* Transpose Controls - matching SongView */}
-      <div className="transpose-controls">
-        <div className="transpose-top-row">
-          <div className="current-key-display">
-            <span className="current-key-label">Key</span>
-            <span className="current-key-value">{getCurrentKeyName()}</span>
-            {semitoneShift !== 0 && (
-              <span className="semitone-shift">
-                {semitoneShift > 0 ? "+" : ""}
-                {semitoneShift}
-              </span>
-            )}
-          </div>
-          <div className="transpose-step-btns">
-            <button
-              className="step-btn minus"
-              onClick={() => handleTranspose(-1)}
-            >
-              <IonIcon icon={removeOutline} />
-            </button>
-            <button
-              className="step-btn plus"
-              onClick={() => handleTranspose(1)}
-            >
-              <IonIcon icon={addOutline} />
-            </button>
-          </div>
+      {/* Transpose Controls - collapsible */}
+      <div
+        className={`transpose-controls-wrapper ${transposeVisible ? "expanded" : "collapsed"}`}
+      >
+        {/* Handle - visible when panel is hidden */}
+        <div
+          className="transpose-handle"
+          onTouchStart={handleTransposeTouchStart}
+          onTouchEnd={handleTransposeTouchEnd}
+          onClick={() => setTransposeVisible(true)}
+          title="Swipe up or tap to show transpose"
+        >
+          <span className="handle-key-hint">
+            KEY&nbsp;{getCurrentKeyName()}
+          </span>
+          <IonIcon icon={chevronDownOutline} className="handle-chevron" />
         </div>
-        <div className="keys-grid">
-          {ALL_KEYS.map((key) => (
-            <button
-              key={key}
-              className={`key-btn ${isKeyActive(key) ? "active" : ""}`}
-              onClick={() => handleKeySelect(key)}
-            >
-              {key}
-            </button>
-          ))}
+        <div className="transpose-controls">
+          <div className="transpose-top-row">
+            <div className="current-key-display">
+              <span className="current-key-label">Key</span>
+              <span className="current-key-value">{getCurrentKeyName()}</span>
+              {semitoneShift !== 0 && (
+                <span className="semitone-shift">
+                  {semitoneShift > 0 ? "+" : ""}
+                  {semitoneShift}
+                </span>
+              )}
+            </div>
+            <div className="transpose-step-btns">
+              <button
+                className="step-btn minus"
+                onClick={() => handleTranspose(-1)}
+              >
+                <IonIcon icon={removeOutline} />
+              </button>
+              <button
+                className="step-btn plus"
+                onClick={() => handleTranspose(1)}
+              >
+                <IonIcon icon={addOutline} />
+              </button>
+              <button
+                className="step-btn collapse-btn"
+                onClick={() => setTransposeVisible(false)}
+                title="Hide transpose panel"
+              >
+                <IonIcon icon={chevronUpOutline} />
+              </button>
+            </div>
+          </div>
+          <div className="keys-grid">
+            {ALL_KEYS.map((key) => (
+              <button
+                key={key}
+                className={`key-btn ${isKeyActive(key) ? "active" : ""}`}
+                onClick={() => handleKeySelect(key)}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
