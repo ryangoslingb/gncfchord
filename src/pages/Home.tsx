@@ -3,7 +3,6 @@ import {
   IonPage,
   IonHeader,
   IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
@@ -11,15 +10,13 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
-  IonText,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
   IonAlert,
-  IonNote,
   IonButtons,
   IonButton,
-  IonListHeader,
+  IonSegment,
+  IonSegmentButton,
+  IonSearchbar,
+  IonActionSheet,
   useIonViewWillEnter,
 } from "@ionic/react";
 import {
@@ -27,8 +24,12 @@ import {
   musicalNotes,
   trash,
   listOutline,
-  pricetagOutline,
+  calendarOutline,
   logOutOutline,
+  ellipsisVertical,
+  createOutline,
+  eyeOutline,
+  addCircleOutline,
 } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { getAllSongs, deleteSong } from "../utils/firebaseStorage";
@@ -36,17 +37,38 @@ import { useAuth } from "../contexts/AuthContext";
 import { Song, SongCategory } from "../types";
 import "./Home.css";
 
+// Extract the first chord from lyrics as the musical key
+const extractKey = (song: Song): string | null => {
+  if (song.key) return song.key;
+  const match = song.lyrics.match(
+    /\[([A-G][#b]?(?:m|maj|min|sus|aug|dim|add)?[0-9]*(?:\/[A-G][#b]?)?)\]/,
+  );
+  return match ? match[1] : null;
+};
+
 const Home: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
   const [songs, setSongs] = useState<Song[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [logoutAlert, setLogoutAlert] = useState(false);
+  const [activeTab, setActiveTab] = useState<SongCategory>("praise");
+  const [actionSong, setActionSong] = useState<Song | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleLogout = async () => {
-    await logout();
-    // PrivateRoute automatically redirects to /login when currentUser becomes null
+  const getFirstName = (): string => {
+    if (currentUser?.displayName) return currentUser.displayName.split(" ")[0];
+    return currentUser?.email?.split("@")[0] || "there";
   };
+
+  const getInitial = (): string => getFirstName().charAt(0).toUpperCase();
+
+  const getDayDate = (): string =>
+    new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    });
 
   const loadSongs = async () => {
     try {
@@ -71,7 +93,10 @@ const Home: React.FC = () => {
     setDeleteId(null);
   };
 
-  // Group songs by category
+  const handleLogout = async () => {
+    await logout();
+  };
+
   const categorizedSongs = useMemo(() => {
     const praise = songs.filter((s) => s.category === "praise");
     const worship = songs.filter((s) => s.category === "worship");
@@ -79,117 +104,159 @@ const Home: React.FC = () => {
     return { praise, worship, other };
   }, [songs]);
 
-  const renderSongItem = (song: Song) => (
-    <IonItemSliding key={song.id}>
+  const activeSongsRaw: Song[] = categorizedSongs[activeTab] ?? [];
+  const activeSongs: Song[] = searchQuery.trim()
+    ? activeSongsRaw.filter(
+        (s) =>
+          s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (s.artist || "").toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : activeSongsRaw;
+
+  const renderSongItem = (song: Song) => {
+    const key = extractKey(song);
+    return (
       <IonItem
+        key={song.id}
         button
-        detail
+        detail={false}
         onClick={() => history.push(`/song/${song.id}`)}
         className="song-item"
+        lines="full"
       >
-        <IonIcon icon={musicalNotes} slot="start" color="primary" />
+        {/* Thumbnail */}
+        <div className="song-thumb" slot="start">
+          <IonIcon icon={musicalNotes} className="thumb-icon" />
+        </div>
+
         <IonLabel>
           <h2 className="song-title-text">{song.title}</h2>
-          {song.artist && <p className="song-artist-text">{song.artist}</p>}
+          <p className="song-meta-text">
+            <span className="song-artist-span">{song.artist || "Unknown"}</span>
+            {key && (
+              <>
+                <span className="meta-dot"> • </span>
+                <span className="key-chip">{key}</span>
+              </>
+            )}
+          </p>
         </IonLabel>
-        <IonNote slot="end" className="song-date">
-          {new Date(song.updatedAt).toLocaleDateString()}
-        </IonNote>
+
+        <IonButton
+          fill="clear"
+          slot="end"
+          className="song-more-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActionSong(song);
+          }}
+        >
+          <IonIcon icon={ellipsisVertical} />
+        </IonButton>
       </IonItem>
-      <IonItemOptions side="end">
-        <IonItemOption color="danger" onClick={() => setDeleteId(song.id)}>
-          <IonIcon slot="icon-only" icon={trash} />
-        </IonItemOption>
-      </IonItemOptions>
-    </IonItemSliding>
-  );
+    );
+  };
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary">
-          <IonTitle className="home-title">
-            <IonIcon icon={musicalNotes} className="title-icon" /> GNCFMusicTeam
-          </IonTitle>
+      <IonHeader className="home-header" collapse="fade">
+        <IonToolbar className="home-toolbar">
+          {/* Logo */}
+          <div slot="start" className="home-logo">
+            <div className="logo-icon-wrap">
+              <IonIcon icon={musicalNotes} className="logo-note" />
+            </div>
+            <span className="logo-text">GncfMusic</span>
+          </div>
+
+          {/* Avatar / logout */}
           <IonButtons slot="end">
-            <IonButton onClick={() => history.push("/setlists")}>
-              <IonIcon slot="icon-only" icon={listOutline} />
-            </IonButton>
-            <IonButton onClick={() => setLogoutAlert(true)}>
-              <IonIcon slot="icon-only" icon={logOutOutline} />
-            </IonButton>
+            <button className="avatar-btn" onClick={() => setLogoutAlert(true)}>
+              {getInitial()}
+            </button>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
       <IonContent className="home-content">
-        {/* Quick access to Set Lists */}
-        <div className="setlist-quick-access">
-          <IonItem
-            button
-            detail
-            onClick={() => history.push("/setlists")}
-            className="setlist-access-item"
-          >
-            <IonIcon icon={listOutline} slot="start" color="secondary" />
-            <IonLabel>
-              <h2>Set Lists</h2>
-              <p>Create service lineups</p>
-            </IonLabel>
-          </IonItem>
+        {/* ── Welcome ── */}
+        <div className="welcome-section">
+          <p className="welcome-date">{getDayDate()}</p>
+          <h1 className="welcome-heading">Welcome, {getFirstName()}</h1>
         </div>
 
+        {/* ── Action cards ── */}
+        <div className="action-cards">
+          <div
+            className="action-card card-yellow"
+            onClick={() => history.push("/editor/new")}
+          >
+            <IonIcon icon={addCircleOutline} className="card-icon" />
+            <span className="card-label">
+              Create
+              <br />
+              Song
+            </span>
+          </div>
+          <div
+            className="action-card card-purple"
+            onClick={() => history.push("/setlists")}
+          >
+            <IonIcon icon={calendarOutline} className="card-icon" />
+            <span className="card-label">
+              Scheduled
+              <br />
+              Lineup
+            </span>
+          </div>
+        </div>
+
+        {/* ── Search bar ── */}
+        <div className="home-search-wrap">
+          <IonSearchbar
+            className="home-searchbar"
+            placeholder="Search songs or artists…"
+            value={searchQuery}
+            onIonInput={(e) => setSearchQuery(e.detail.value ?? "")}
+            onIonClear={() => setSearchQuery("")}
+            debounce={150}
+          />
+        </div>
+
+        {/* ── Category tabs ── */}
+        <IonSegment
+          className="home-tabs"
+          value={activeTab}
+          onIonChange={(e) => setActiveTab(e.detail.value as SongCategory)}
+        >
+          <IonSegmentButton value="praise">
+            <IonLabel>Praise</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="worship">
+            <IonLabel>Worship</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="other">
+            <IonLabel>Other</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
+
+        {/* ── Song list ── */}
         {songs.length === 0 ? (
           <div className="empty-state">
             <IonIcon icon={musicalNotes} className="empty-icon" />
-            <IonText color="medium">
-              <h2>No songs yet</h2>
-              <p>
-                Tap <strong>+</strong> to add your first song with chords.
-              </p>
-            </IonText>
+            <p className="empty-title">No songs yet</p>
+            <p className="empty-sub">
+              Tap <strong>+</strong> to add your first song.
+            </p>
+          </div>
+        ) : activeSongs.length === 0 ? (
+          <div className="empty-tab-state">
+            <p>No {activeTab} songs yet</p>
           </div>
         ) : (
-          <>
-            {/* Praise Songs */}
-            {categorizedSongs.praise.length > 0 && (
-              <IonList lines="full" className="song-list category-list">
-                <IonListHeader className="category-header praise">
-                  <IonLabel>
-                    <IonIcon icon={pricetagOutline} /> Praise
-                  </IonLabel>
-                  <IonNote>{categorizedSongs.praise.length} songs</IonNote>
-                </IonListHeader>
-                {categorizedSongs.praise.map(renderSongItem)}
-              </IonList>
-            )}
-
-            {/* Worship Songs */}
-            {categorizedSongs.worship.length > 0 && (
-              <IonList lines="full" className="song-list category-list">
-                <IonListHeader className="category-header worship">
-                  <IonLabel>
-                    <IonIcon icon={pricetagOutline} /> Worship
-                  </IonLabel>
-                  <IonNote>{categorizedSongs.worship.length} songs</IonNote>
-                </IonListHeader>
-                {categorizedSongs.worship.map(renderSongItem)}
-              </IonList>
-            )}
-
-            {/* Other Songs */}
-            {categorizedSongs.other.length > 0 && (
-              <IonList lines="full" className="song-list category-list">
-                <IonListHeader className="category-header other">
-                  <IonLabel>
-                    <IonIcon icon={pricetagOutline} /> Other
-                  </IonLabel>
-                  <IonNote>{categorizedSongs.other.length} songs</IonNote>
-                </IonListHeader>
-                {categorizedSongs.other.map(renderSongItem)}
-              </IonList>
-            )}
-          </>
+          <IonList className="song-list" lines="full">
+            {activeSongs.map(renderSongItem)}
+          </IonList>
         )}
 
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
@@ -201,6 +268,38 @@ const Home: React.FC = () => {
           </IonFabButton>
         </IonFab>
       </IonContent>
+
+      {/* Three-dot action sheet */}
+      <IonActionSheet
+        isOpen={actionSong !== null}
+        header={actionSong?.title}
+        buttons={[
+          {
+            text: "View Song",
+            icon: eyeOutline,
+            handler: () => {
+              history.push(`/song/${actionSong?.id}`);
+            },
+          },
+          {
+            text: "Edit Song",
+            icon: createOutline,
+            handler: () => {
+              history.push(`/editor/${actionSong?.id}`);
+            },
+          },
+          {
+            text: "Delete",
+            icon: trash,
+            role: "destructive",
+            handler: () => {
+              if (actionSong) setDeleteId(actionSong.id);
+            },
+          },
+          { text: "Cancel", role: "cancel" },
+        ]}
+        onDidDismiss={() => setActionSong(null)}
+      />
 
       <IonAlert
         isOpen={logoutAlert}

@@ -2,37 +2,36 @@ import React, { useEffect, useState } from "react";
 import {
   IonPage,
   IonHeader,
+  IonFooter,
   IonToolbar,
   IonTitle,
   IonContent,
   IonButtons,
   IonButton,
-  IonItem,
-  IonLabel,
   IonInput,
   IonIcon,
   IonToast,
   IonBackButton,
-  IonList,
-  IonReorderGroup,
-  IonReorder,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
   IonModal,
   IonSearchbar,
   IonCheckbox,
-  IonChip,
   IonAlert,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonDatetime,
 } from "@ionic/react";
 import {
   save,
-  addOutline,
+  addCircleOutline,
   musicalNotesOutline,
   trashOutline,
   reorderThreeOutline,
   closeOutline,
   checkmarkOutline,
+  calendarOutline,
+  listOutline,
+  serverOutline,
 } from "ionicons/icons";
 import { useHistory, useParams } from "react-router-dom";
 import {
@@ -63,6 +62,10 @@ const SetListEditor: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedSongIds, setSelectedSongIds] = useState<string[]>([]);
 
+  // Date picker
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateISO, setDateISO] = useState("");
+
   // Alert for adding new section
   const [showSectionAlert, setShowSectionAlert] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
@@ -77,6 +80,7 @@ const SetListEditor: React.FC = () => {
         if (setList) {
           setName(setList.name);
           setDate(setList.date);
+          setDateISO(parseStoredDateToISO(setList.date));
           setSections(setList.sections);
         } else {
           history.replace("/setlists");
@@ -89,24 +93,45 @@ const SetListEditor: React.FC = () => {
           { id: `section_${now}_2`, name: "Worship", songIds: [] },
         ]);
         // Default date to next Sunday
-        const nextSunday = getNextSunday();
-        setDate(nextSunday);
+        const nextSundayISO = getNextSundayISO();
+        setDateISO(nextSundayISO);
+        setDate(formatDateDisplay(nextSundayISO));
       }
     };
     load();
   }, [id, isNew, history]);
 
-  const getNextSunday = (): string => {
+  const getNextSundayISO = (): string => {
     const today = new Date();
     const daysUntilSunday = (7 - today.getDay()) % 7 || 7;
-    const nextSunday = new Date(today);
-    nextSunday.setDate(today.getDate() + daysUntilSunday);
-    return nextSunday.toLocaleDateString("en-US", {
+    const next = new Date(today);
+    next.setDate(today.getDate() + daysUntilSunday);
+    return next.toISOString().split("T")[0]; // YYYY-MM-DD
+  };
+
+  const formatDateDisplay = (isoStr: string): string => {
+    if (!isoStr) return "";
+    const d = new Date(isoStr + "T12:00:00");
+    return d.toLocaleDateString("en-US", {
       weekday: "long",
       month: "long",
       day: "numeric",
       year: "numeric",
     });
+  };
+
+  const parseStoredDateToISO = (dateStr: string): string => {
+    if (!dateStr) return "";
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) return dateStr;
+    const parsed = new Date(dateStr);
+    if (!isNaN(parsed.getTime())) return parsed.toISOString().split("T")[0];
+    return "";
+  };
+
+  const handleDateChange = (isoValue: string) => {
+    const iso = isoValue.split("T")[0];
+    setDateISO(iso);
+    setDate(formatDateDisplay(iso));
   };
 
   const handleSave = async () => {
@@ -225,139 +250,214 @@ const SetListEditor: React.FC = () => {
   return (
     <IonPage className="setlist-editor-page">
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar className="sle-toolbar">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/setlists" text="" />
+            <IonBackButton defaultHref="/setlists" text="" color="light" />
           </IonButtons>
-          <IonTitle>{isNew ? "New Set List" : "Edit Set List"}</IonTitle>
+          <IonTitle className="sle-header-title">
+            {isNew ? "New Set List" : "Edit Set List"}
+          </IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={handleSave} strong>
-              <IonIcon slot="start" icon={save} />
-              Save
-            </IonButton>
+            <button className="save-pill-btn" onClick={handleSave}>
+              <IonIcon icon={save} />
+              <span>SAVE</span>
+            </button>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
       <IonContent className="setlist-editor-content">
-        {/* Set List Info */}
-        <div className="editor-section">
-          <IonItem className="editor-item">
-            <IonLabel position="stacked">Set List Name *</IonLabel>
-            <IonInput
-              value={name}
-              onIonInput={(e) => setName(e.detail.value ?? "")}
-              placeholder="e.g., This Sunday Service"
-              clearInput
-            />
-          </IonItem>
-          <IonItem className="editor-item">
-            <IonLabel position="stacked">Date / Event</IonLabel>
-            <IonInput
-              value={date}
-              onIonInput={(e) => setDate(e.detail.value ?? "")}
-              placeholder="e.g., Sunday, March 15, 2026"
-              clearInput
-            />
-          </IonItem>
+        {/* ── Info card ── */}
+        <div className="sle-card">
+          {/* Name field */}
+          <div className="sle-field-group">
+            <label className="sle-field-label">SET LIST NAME</label>
+            <div className="sle-input-wrap">
+              <IonIcon icon={listOutline} className="sle-input-icon" />
+              <IonInput
+                className="sle-input"
+                value={name}
+                onIonInput={(e) => setName(e.detail.value ?? "")}
+                placeholder="e.g., This Sunday Service"
+              />
+            </div>
+          </div>
+
+          <div className="sle-divider" />
+
+          {/* Date field */}
+          <div className="sle-field-group">
+            <label className="sle-field-label">DATE / EVENT</label>
+            <div className="sle-input-wrap sle-input-wrap--date">
+              <IonIcon icon={calendarOutline} className="sle-input-icon" />
+              <button
+                className="sle-date-btn"
+                onClick={() => setShowDatePicker(true)}
+              >
+                {date ? (
+                  date
+                ) : (
+                  <span className="sle-date-placeholder">Pick a date…</span>
+                )}
+              </button>
+              {date ? (
+                <button
+                  className="sle-clear-btn"
+                  onClick={() => {
+                    setDate("");
+                    setDateISO("");
+                  }}
+                >
+                  ×
+                </button>
+              ) : null}
+            </div>
+          </div>
         </div>
 
-        {/* Sections */}
-        <div className="sections-header">
-          <h2>Lineup Sections</h2>
-          <IonButton
-            fill="clear"
-            size="small"
+        {/* ── Sections header ── */}
+        <div className="sle-sections-header">
+          <div className="sle-sections-title-row">
+            <span className="sle-sections-title">Lineup Sections</span>
+            {sections.length > 0 && (
+              <span className="sle-sections-badge">{sections.length}</span>
+            )}
+          </div>
+          <button
+            className="sle-add-section-btn"
             onClick={() => setShowSectionAlert(true)}
           >
-            <IonIcon slot="start" icon={addOutline} />
-            Add Section
-          </IonButton>
+            <IonIcon icon={addCircleOutline} />
+            ADD SECTION
+          </button>
         </div>
 
-        <IonList className="sections-list">
-          <IonReorderGroup disabled={false} onIonItemReorder={handleReorder}>
-            {sections.map((section) => (
-              <div key={section.id} className="section-card">
-                <div className="section-header">
-                  <IonReorder slot="start">
-                    <IonIcon icon={reorderThreeOutline} />
-                  </IonReorder>
-                  <span className="section-name">{section.name}</span>
-                  <div className="section-actions">
-                    <IonButton
-                      fill="clear"
-                      size="small"
+        {/* ── Timeline + section cards ── */}
+        <div className="sle-timeline">
+          {sections.map((section, idx) => (
+            <div key={section.id} className="sle-timeline-row">
+              {/* Left timeline */}
+              <div className="sle-timeline-left">
+                <div className="sle-timeline-dot">
+                  <IonIcon icon={musicalNotesOutline} />
+                </div>
+                {idx < sections.length - 1 && (
+                  <div className="sle-timeline-line" />
+                )}
+              </div>
+
+              {/* Section card */}
+              <div className="sle-section-card">
+                <div className="sle-section-header">
+                  <IonIcon
+                    icon={reorderThreeOutline}
+                    className="sle-drag-handle"
+                  />
+                  <span className="sle-section-name">{section.name}</span>
+                  <div className="sle-section-actions">
+                    <button
+                      className="sle-icon-btn"
                       onClick={() => openSongPicker(section.id)}
                     >
-                      <IonIcon slot="icon-only" icon={addOutline} />
-                    </IonButton>
-                    <IonButton
-                      fill="clear"
-                      size="small"
-                      color="danger"
+                      +
+                    </button>
+                    <button
+                      className="sle-icon-btn sle-icon-btn--trash"
                       onClick={() => removeSection(section.id)}
                     >
-                      <IonIcon slot="icon-only" icon={trashOutline} />
-                    </IonButton>
+                      <IonIcon icon={trashOutline} />
+                    </button>
                   </div>
                 </div>
 
                 {section.songIds.length === 0 ? (
-                  <div className="empty-section">
-                    <p>No songs yet. Tap + to add songs.</p>
+                  <div className="sle-empty-section">
+                    <p>No songs yet.</p>
+                    <span>Tap + to add songs</span>
                   </div>
                 ) : (
-                  <div className="section-songs">
-                    {section.songIds.map((songId, index) => (
-                      <div key={songId} className="song-chip">
-                        <span className="song-number">{index + 1}.</span>
-                        <div className="song-info">
-                          <span className="song-title">
+                  <div className="sle-section-songs">
+                    {section.songIds.map((songId, si) => (
+                      <div key={songId} className="sle-song-row">
+                        <span className="sle-song-number">{si + 1}.</span>
+                        <div className="sle-song-info">
+                          <span className="sle-song-title">
                             {getSongTitle(songId)}
                           </span>
                           {getSongArtist(songId) && (
-                            <span className="song-artist">
+                            <span className="sle-song-artist">
                               {getSongArtist(songId)}
                             </span>
                           )}
                         </div>
-                        <IonButton
-                          fill="clear"
-                          size="small"
+                        <button
+                          className="sle-icon-btn"
                           onClick={() =>
                             removeSongFromSection(section.id, songId)
                           }
                         >
-                          <IonIcon slot="icon-only" icon={closeOutline} />
-                        </IonButton>
+                          <IonIcon icon={closeOutline} />
+                        </button>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            ))}
-          </IonReorderGroup>
-        </IonList>
+            </div>
+          ))}
 
-        {sections.length === 0 && (
-          <div className="empty-sections">
-            <p>No sections yet. Add a section to start building your lineup.</p>
-          </div>
-        )}
+          {/* End of lineup */}
+          {sections.length > 0 && (
+            <div className="sle-timeline-end">
+              <div className="sle-timeline-end-dot" />
+              <span className="sle-timeline-end-label">End of lineup</span>
+            </div>
+          )}
 
-        <div className="save-btn-wrap">
-          <IonButton
-            expand="block"
-            onClick={handleSave}
-            size="large"
-            color="primary"
-          >
-            <IonIcon slot="start" icon={save} />
-            {isNew ? "Create Set List" : "Update Set List"}
-          </IonButton>
+          {sections.length === 0 && (
+            <div className="sle-empty-sections">
+              <p>No sections yet. Tap “ADD SECTION” to start.</p>
+            </div>
+          )}
         </div>
+
+        <div style={{ height: 16 }} />
       </IonContent>
+
+      {/* ── Sticky footer CTA ── */}
+      <IonFooter className="sle-footer">
+        <button className="sle-create-btn" onClick={handleSave}>
+          <IonIcon icon={serverOutline} />
+          <span>{isNew ? "CREATE SET LIST" : "UPDATE SET LIST"}</span>
+        </button>
+      </IonFooter>
+
+      {/* Date Picker Modal */}
+      <IonModal
+        isOpen={showDatePicker}
+        onDidDismiss={() => setShowDatePicker(false)}
+        className="sle-date-picker-modal"
+        initialBreakpoint={0.5}
+        breakpoints={[0, 0.5]}
+        keepContentsMounted
+      >
+        <IonContent className="sle-date-picker-content">
+          <IonDatetime
+            presentation="date"
+            value={dateISO || undefined}
+            preferWheel={false}
+            onIonChange={(e) => {
+              const val = Array.isArray(e.detail.value)
+                ? e.detail.value[0]
+                : e.detail.value;
+              if (val) {
+                handleDateChange(val);
+                setShowDatePicker(false);
+              }
+            }}
+          />
+        </IonContent>
+      </IonModal>
 
       {/* Song Picker Modal */}
       <IonModal
@@ -389,10 +489,9 @@ const SetListEditor: React.FC = () => {
         </IonHeader>
         <IonContent>
           {allSongs.length === 0 ? (
-            <div className="empty-songs-modal">
+            <div className="sle-empty-songs-modal">
               <IonIcon icon={musicalNotesOutline} />
               <p>No songs in your library yet.</p>
-              <p>Add some songs first!</p>
             </div>
           ) : (
             <IonList>
@@ -427,7 +526,6 @@ const SetListEditor: React.FC = () => {
             name: "sectionName",
             type: "text",
             placeholder: "e.g., Special Number, Offertory",
-            value: newSectionName,
           },
         ]}
         buttons={[
@@ -439,7 +537,6 @@ const SetListEditor: React.FC = () => {
           {
             text: "Add",
             handler: (data) => {
-              setNewSectionName(data.sectionName || "");
               const section = createSetListSection(
                 data.sectionName || "New Section",
               );

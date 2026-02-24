@@ -358,7 +358,7 @@ const SetListView: React.FC = () => {
                 onClick={() => startPlayMode(0, 0)}
               >
                 <IonIcon slot="start" icon={playCircle} />
-                Play Set List
+                Play Set
               </IonButton>
               <IonButton
                 className="play-all-btn"

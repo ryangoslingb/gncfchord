@@ -1,4 +1,7 @@
-/* Visual Chord Editor Styles */
+/* ── VisualChordEditor ─────────────────────────────
+   Raw text ↔ visual chord preview component.
+   Chord highlights → yellow. Text → c-text.
+──────────────────────────────────────────────── */
 
 .visual-chord-editor {
   display: flex;
@@ -6,46 +9,50 @@
   min-height: 300px;
 }
 
-/* Editor toolbar tabs */
+/* ── Mode tab bar ───────────────────── */
 .editor-toolbar {
   display: flex;
-  background: var(--ion-color-light);
-  border-radius: 8px;
-  padding: 4px;
-  margin-bottom: 12px;
+  background: var(--c-surface);
+  border-radius: var(--r-sm);
+  padding: var(--sp-1);
+  margin-bottom: var(--sp-3);
+  gap: 2px;
 }
 
 .toolbar-tab {
   flex: 1;
-  padding: 10px 16px;
+  padding: var(--sp-2) var(--sp-4);
   border: none;
   background: transparent;
-  color: var(--ion-color-medium);
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 6px;
+  color: var(--c-text-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  border-radius: calc(var(--r-sm) - 2px);
   cursor: pointer;
-  transition: all 0.2s;
+  transition:
+    background var(--ease),
+    color var(--ease);
 }
 
 .toolbar-tab.active {
-  background: var(--ion-color-primary);
-  color: white;
+  background: var(--c-purple);
+  color: #fff;
 }
 
-/* Hint text */
+/* ── Hint text strip ────────────────── */
 .hint-text {
   text-align: center;
-  color: var(--ion-color-medium);
-  font-size: 13px;
-  margin: 0 0 12px;
-  padding: 10px 12px;
-  background: var(--ion-color-light);
-  border-radius: 8px;
+  color: var(--c-text-2);
+  font-size: var(--fs-sm);
+  margin: 0 0 var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--c-surface);
+  border-radius: var(--r-sm);
+  border: 1px solid var(--c-border);
   line-height: 1.5;
 }
 
-/* Chord sheet edit mode */
+/* ── Raw text editor ────────────────── */
 .chord-sheet-edit {
   display: flex;
   flex-direction: column;
@@ -54,48 +61,49 @@
 .chord-sheet-textarea {
   width: 100%;
   min-height: 320px;
-  padding: 16px;
-  border: 1px solid var(--ion-border-color);
-  border-radius: 12px;
+  padding: var(--sp-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
   font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.6;
-  background: var(--ion-item-background);
-  color: var(--ion-text-color);
+  background: var(--c-surface-2);
+  color: var(--c-text);
   resize: vertical;
   white-space: pre;
   overflow-x: auto;
+  transition: border-color var(--ease);
 }
 
 .chord-sheet-textarea::placeholder {
-  color: var(--ion-color-medium);
-  opacity: 0.7;
+  color: var(--c-text-3);
 }
 
 .chord-sheet-textarea:focus {
   outline: none;
-  border-color: var(--ion-color-primary);
-  box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.15);
+  border-color: var(--c-purple);
+  box-shadow: 0 0 0 3px var(--c-purple-dim);
 }
 
-/* Chord sheet preview */
+/* ── Visual preview ─────────────────── */
 .chord-sheet-preview {
-  background: var(--ion-item-background);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
   min-height: 280px;
   overflow-x: auto;
 }
 
 .empty-preview {
   text-align: center;
-  padding: 40px 20px;
-  color: var(--ion-color-medium);
+  padding: var(--sp-10) var(--sp-5);
+  color: var(--c-text-3);
 }
 
 .empty-preview p {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .preview-content {
@@ -106,7 +114,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  margin-bottom: 6px;
+  margin-bottom: var(--sp-1);
   min-height: 24px;
 }
 
@@ -115,17 +123,18 @@
 }
 
 .preview-line.chords-only {
-  margin-bottom: 4px;
+  margin-bottom: var(--sp-1);
 }
 
+/* Standalone chord (no lyric below it) */
 .standalone-chord {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ion-color-primary);
-  margin-right: 16px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--c-yellow);
+  margin-right: var(--sp-4);
 }
 
-/* Chord-word pair */
+/* Chord + lyric pair */
 .chord-word-pair {
   display: inline-flex;
   flex-direction: column;
@@ -134,46 +143,46 @@
 }
 
 .chord-above {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ion-color-primary);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--c-yellow);
   line-height: 1.3;
   min-height: 18px;
 }
 
 .word-below {
-  font-size: 16px;
-  color: var(--ion-text-color);
+  font-size: var(--fs-md);
+  color: var(--c-text);
   line-height: 1.4;
 }
 
 .lyric-segment {
-  font-size: 16px;
-  color: var(--ion-text-color);
+  font-size: var(--fs-md);
+  color: var(--c-text);
   line-height: 1.4;
   white-space: pre;
 }
 
 .lyric-word {
-  font-size: 16px;
-  color: var(--ion-text-color);
+  font-size: var(--fs-md);
+  color: var(--c-text);
   line-height: 1.4;
 }
 
-/* Responsive */
+/* ── Responsive ─────────────────────── */
 @media (max-width: 400px) {
   .chord-sheet-textarea {
-    font-size: 13px;
-    padding: 12px;
+    font-size: var(--fs-sm);
+    padding: var(--sp-3);
   }
-  
+
   .chord-above {
-    font-size: 12px;
+    font-size: var(--fs-xs);
   }
-  
+
   .word-below,
   .lyric-segment,
   .lyric-word {
-    font-size: 14px;
+    font-size: var(--fs-base);
   }
 }

@@ -1,177 +1,465 @@
-/* SetListEditor Styles */
+/* ── SetListEditor ─────────────────────────────────
+   Redesigned to match music-app setlist editor UI.
+──────────────────────────────────────────────── */
 
 .setlist-editor-page {
-  --background: var(--ion-background-color);
+  --background: var(--c-bg);
 }
 
 .setlist-editor-content {
-  --padding-bottom: calc(100px + var(--ion-safe-area-bottom, 0px));
+  --background: var(--c-bg);
 }
 
-/* Editor sections */
-.editor-section {
-  padding: 8px 0;
+/* ── Header toolbar ─────────────────── */
+.sle-toolbar {
+  --background: var(--c-purple, #7c3aed);
 }
 
-.editor-item {
-  --background: var(--ion-item-background);
-  --border-radius: 12px;
-  margin: 8px 16px;
-  border-radius: 12px;
-}
-
-.editor-item ion-label {
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-/* Sections header */
-.sections-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 16px 8px;
-  margin-top: 8px;
-}
-
-.sections-header h2 {
-  font-size: 1.1rem;
+.sle-header-title {
+  font-size: 17px;
   font-weight: 700;
-  margin: 0;
-  color: var(--ion-text-color);
+  color: #fff;
 }
 
-/* Sections list */
-.sections-list {
-  background: transparent;
-}
-
-/* Section card */
-.section-card {
-  background: var(--ion-item-background);
-  border-radius: 12px;
-  margin: 8px 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.section-header {
+/* White pill SAVE button */
+.save-pill-btn {
   display: flex;
   align-items: center;
-  padding: 12px;
-  background: var(--ion-color-light);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  padding: 6px 14px 6px 10px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background 0.15s;
+}
+
+.save-pill-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.save-pill-btn ion-icon {
+  font-size: 16px;
+}
+
+/* ── Info card ──────────────────────── */
+.sle-card {
+  background: var(--c-surface);
+  border-radius: 16px;
+  margin: 14px 14px 0;
+  padding: 18px 16px;
+  border: 1px solid var(--c-border);
+}
+
+.sle-field-group {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.section-header ion-reorder {
-  cursor: grab;
-  color: var(--ion-color-medium);
+.sle-field-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text-3);
 }
 
-.section-name {
-  flex: 1;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ion-text-color);
+.sle-divider {
+  height: 1px;
+  background: var(--c-border);
+  margin: 14px 0;
 }
 
-.section-actions {
-  display: flex;
-  gap: 0;
-}
-
-.section-actions ion-button {
-  --padding-start: 8px;
-  --padding-end: 8px;
-}
-
-/* Empty section */
-.empty-section {
-  padding: 16px;
-  text-align: center;
-}
-
-.empty-section p {
-  color: var(--ion-color-medium);
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-/* Section songs */
-.section-songs {
-  padding: 8px;
-}
-
-.song-chip {
+.sle-input-wrap {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
-  background: var(--ion-background-color);
-  border-radius: 8px;
-  margin-bottom: 6px;
-  gap: 10px;
+  background: var(--c-surface-2, #1c1c1c);
+  border-radius: 10px;
+  border: 1px solid var(--c-border);
+  padding: 0 12px;
+  height: 46px;
+  gap: 8px;
 }
 
-.song-chip:last-child {
+.sle-input-wrap--date {
+  cursor: pointer;
+}
+
+/* Date trigger button inside the input wrap */
+.sle-date-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-size: 15px;
+  color: var(--c-text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sle-date-placeholder {
+  color: var(--c-text-3);
+  opacity: 0.85;
+}
+
+/* Date picker sheet modal */
+.sle-date-picker-modal {
+  --border-radius: 18px 18px 0 0;
+  --background: var(--c-surface);
+}
+
+.sle-date-picker-content {
+  --background: var(--c-surface, #1a1a24);
+}
+
+.sle-date-picker-content ion-datetime {
+  --background: var(--c-surface, #1a1a24);
+  --background-rgb: 26, 26, 36;
+  --color: var(--c-text, #fff);
+  --title-color: var(--c-text, #fff);
+  --wheel-highlight-background: rgba(124, 58, 237, 0.18);
+  --ion-color-primary: var(--c-purple, #7c3aed);
+  border-radius: 12px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sle-input-icon {
+  font-size: 18px;
+  color: var(--c-text-3);
+  flex-shrink: 0;
+}
+
+.sle-input {
+  flex: 1;
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --color: var(--c-text);
+  --placeholder-color: var(--c-text-3);
+  --placeholder-opacity: 1;
+  font-size: 15px;
+}
+
+.sle-clear-btn {
+  background: none;
+  border: none;
+  color: var(--c-text-3);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── Sections header row ────────────── */
+.sle-sections-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 16px 10px;
+}
+
+.sle-sections-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sle-sections-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--c-text);
+}
+
+.sle-sections-badge {
+  min-width: 22px;
+  height: 22px;
+  background: var(--c-purple, #7c3aed);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.sle-add-section-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #d4a800;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.sle-add-section-btn ion-icon {
+  font-size: 17px;
+}
+
+/* ── Timeline layout ─────────────────── */
+.sle-timeline {
+  padding: 0 14px;
+}
+
+.sle-timeline-row {
+  display: flex;
+  gap: 12px;
   margin-bottom: 0;
 }
 
-.song-number {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ion-color-primary);
-  min-width: 20px;
-}
-
-.song-info {
-  flex: 1;
+/* Left spine */
+.sle-timeline-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  width: 30px;
+  flex-shrink: 0;
+  padding-top: 14px;
+}
+
+.sle-timeline-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--c-purple, #7c3aed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.sle-timeline-dot ion-icon {
+  font-size: 14px;
+  color: #fff;
+}
+
+.sle-timeline-line {
+  width: 2px;
+  flex: 1;
+  background: var(--c-purple, #7c3aed);
+  opacity: 0.45;
+  min-height: 24px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+/* Section card */
+.sle-section-card {
+  flex: 1;
+  background: var(--c-surface);
+  border-radius: 14px;
+  border: 1px solid var(--c-border);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.sle-section-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  gap: 10px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.sle-drag-handle {
+  font-size: 20px;
+  color: var(--c-text-3);
+  flex-shrink: 0;
+}
+
+.sle-section-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-text);
+}
+
+.sle-section-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sle-icon-btn {
+  background: none;
+  border: none;
+  color: var(--c-text-2);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+}
+
+.sle-icon-btn:active {
+  background: var(--c-surface-2);
+}
+
+.sle-icon-btn--trash {
+  color: var(--c-text-3);
+  font-size: 16px;
+}
+
+/* ── Empty section ──────────────────── */
+.sle-empty-section {
+  padding: 18px 14px 16px;
+  text-align: center;
+}
+
+.sle-empty-section p {
+  color: var(--c-text-3);
+  font-size: 14px;
+  margin: 0 0 2px;
+}
+
+.sle-empty-section span {
+  color: #d4a800;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ── Song rows inside section ───────── */
+.sle-section-songs {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sle-song-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--c-surface-2, #1c1c1c);
+  border-radius: 8px;
+  border: 1px solid var(--c-border);
+}
+
+.sle-song-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: #d4a800;
+  min-width: 18px;
+}
+
+.sle-song-info {
+  flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
-.song-title {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--ion-text-color);
+.sle-song-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.song-artist {
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
+.sle-song-artist {
+  font-size: 12px;
+  color: var(--c-text-2);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.song-chip ion-button {
-  --padding-start: 4px;
-  --padding-end: 4px;
-  margin: 0;
+/* ── End of lineup ──────────────────── */
+.sle-timeline-end {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0 14px 8px;
 }
 
-/* Empty sections */
-.empty-sections {
+.sle-timeline-end-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-text-3);
+  flex-shrink: 0;
+}
+
+.sle-timeline-end-label {
+  font-size: 13px;
+  color: var(--c-text-3);
+  font-style: italic;
+}
+
+/* ── Empty no-sections state ────────── */
+.sle-empty-sections {
   padding: 40px 24px;
   text-align: center;
 }
 
-.empty-sections p {
-  color: var(--ion-color-medium);
-  font-size: 0.95rem;
+.sle-empty-sections p {
+  color: var(--c-text-3);
+  font-size: 14px;
+  margin: 0;
 }
 
-/* Save button */
-.save-btn-wrap {
-  padding: 24px 16px;
+/* ── Footer CTA ─────────────────────── */
+.sle-footer {
+  background: var(--c-bg);
+  border-top: none;
+  padding: 10px 14px calc(10px + var(--ion-safe-area-bottom, 0px));
 }
 
-/* Song picker modal */
-.empty-songs-modal {
+.sle-create-btn {
+  width: 100%;
+  height: 54px;
+  background: var(--c-purple, #7c3aed);
+  border: none;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.sle-create-btn:active {
+  filter: brightness(0.88);
+}
+
+.sle-create-btn ion-icon {
+  font-size: 20px;
+}
+
+/* ── Song picker modal empties ──────── */
+.sle-empty-songs-modal {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,41 +467,28 @@
   height: 50vh;
   text-align: center;
   padding: 24px;
-  color: var(--ion-color-medium);
+  color: var(--c-text-3);
 }
 
-.empty-songs-modal ion-icon {
-  font-size: 64px;
+.sle-empty-songs-modal ion-icon {
+  font-size: 56px;
   margin-bottom: 16px;
-  opacity: 0.5;
 }
 
-.empty-songs-modal p {
+.sle-empty-songs-modal p {
   margin: 4px 0;
-  font-size: 0.95rem;
+  font-size: 15px;
+  color: var(--c-text-2);
 }
 
-/* Responsive */
+/* ── Responsive ─────────────────────── */
 @media (min-width: 768px) {
-  .editor-section {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .sections-header {
+  .sle-card,
+  .sle-sections-header,
+  .sle-timeline,
+  .sle-footer {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
-  }
-
-  .section-card {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .save-btn-wrap {
-    max-width: 600px;
-    margin: 0 auto;
   }
 }

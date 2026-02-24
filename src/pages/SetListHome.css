@@ -1,26 +1,31 @@
-/* SetListHome Styles */
+/* ── SetListHome ───────────────────────────────────
+   Mirrors Home.css patterns — same tile/row system.
+──────────────────────────────────────────────── */
 
 .setlist-home-page {
-  --background: var(--ion-background-color);
-}
-
-.setlist-home-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.title-icon {
-  font-size: 1.3rem;
+  --background: var(--c-bg);
 }
 
 .setlist-home-content {
-  --padding-bottom: calc(80px + var(--ion-safe-area-bottom, 0px));
+  --background: var(--c-bg);
+  --padding-bottom: calc(var(--sp-10) + var(--ion-safe-area-bottom, 0px));
 }
 
-/* Empty state */
+/* ── Toolbar ────────────────────────── */
+.setlist-home-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  color: var(--c-text);
+}
+
+.title-icon {
+  font-size: var(--fs-lg);
+}
+
+/* ── Empty state ────────────────────── */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -28,67 +33,91 @@
   justify-content: center;
   height: 70vh;
   text-align: center;
-  padding: 24px;
+  padding: var(--sp-6);
+  padding-left: calc(var(--sp-6) + var(--ion-safe-area-left, 0px));
+  padding-right: calc(var(--sp-6) + var(--ion-safe-area-right, 0px));
 }
 
 .empty-icon {
-  font-size: 72px;
-  color: var(--ion-color-medium);
-  margin-bottom: 16px;
-  opacity: 0.4;
+  font-size: 68px;
+  color: var(--c-text-3);
+  margin-bottom: var(--sp-4);
 }
 
 .empty-state h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0 0 8px;
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text);
+  margin: 0 0 var(--sp-2);
 }
 
 .empty-state p {
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: var(--fs-base);
+  color: var(--c-text-2);
+  line-height: 1.6;
 }
 
-/* Set list items */
+/* ── Setlist rows ───────────────────── */
 .setlist-list {
   background: transparent;
-  padding-bottom: calc(80px + var(--ion-safe-area-bottom, 0px));
+  padding-bottom: calc(var(--sp-10) + var(--ion-safe-area-bottom, 0px));
 }
 
 .setlist-item {
-  --background: var(--ion-item-background);
-  --border-radius: 12px;
+  --background: var(--c-surface-2);
+  --border-radius: var(--r-md);
   --min-height: 64px;
-  margin: 8px 12px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --inner-padding-end: var(--sp-4);
+  margin: var(--sp-1) var(--sp-3);
+  margin-left: calc(var(--sp-3) + var(--ion-safe-area-left, 0px));
+  margin-right: calc(var(--sp-3) + var(--ion-safe-area-right, 0px));
+  border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
+  transition: background var(--ease);
+}
+
+.setlist-item:active {
+  --background: var(--c-surface-3);
 }
 
 .setlist-name {
-  font-size: 1rem;
-  font-weight: 600 !important;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold) !important;
+  color: var(--c-text);
 }
 
 .setlist-date {
-  font-size: 0.85rem;
-  color: var(--ion-color-medium) !important;
+  font-size: var(--fs-sm);
+  color: var(--c-text-2) !important;
+  margin-top: 2px;
 }
 
-/* FAB */
+.setlist-song-count {
+  font-size: var(--fs-xs);
+  color: var(--c-text-3);
+  white-space: nowrap;
+}
+
+/* ── FAB ────────────────────────────── */
 ion-fab[vertical="bottom"][horizontal="end"] {
-  right: calc(16px + var(--ion-safe-area-right, 0px));
-  bottom: calc(16px + var(--ion-safe-area-bottom, 0px));
+  right: calc(var(--sp-4) + var(--ion-safe-area-right, 0px));
+  bottom: calc(var(--sp-4) + var(--ion-safe-area-bottom, 0px));
 }
 
-/* Responsive */
-@media (min-width: 768px) {
-  .setlist-list {
-    max-width: 600px;
-    margin: 0 auto;
-  }
+ion-fab-button {
+  --background: var(--c-purple);
+  --background-hover: #7c3aed;
+  --background-activated: #6d28d9;
+  --color: #fff;
+  --border-radius: var(--r-full);
+}
 
+/* ── Responsive ─────────────────────── */
+@media (min-width: 768px) {
+  .setlist-list,
   .empty-state {
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

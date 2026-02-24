@@ -1,151 +1,254 @@
-/* SongEditor Styles */
+/* ── SongEditor ────────────────────────────────────
+   Redesigned to match music-app editor UI.
+──────────────────────────────────────────────── */
 
-/* Page background */
+/* ── Content ────────────────────────── */
 .editor-content {
-  --background: var(--ion-color-light, #f4f5f8);
-  --padding-bottom: calc(20px + var(--ion-safe-area-bottom, 0px));
+  --background: var(--c-bg);
 }
 
-/* Sections */
-.editor-section {
-  background: var(--ion-item-background);
-  border-radius: 12px;
-  margin: 16px 12px 0;
-  margin-left: calc(12px + var(--ion-safe-area-left, 0px));
-  margin-right: calc(12px + var(--ion-safe-area-right, 0px));
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+/* ── Header ─────────────────────────── */
+.editor-toolbar {
+  --background: var(--c-purple, #7c3aed);
 }
 
-.editor-item {
-  --background: transparent;
-  --min-height: 56px;
+.editor-header-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
 }
 
-/* Category section */
-.category-section {
-  background: var(--ion-item-background);
-  border-radius: 12px;
-  margin: 16px 12px 0;
-  margin-left: calc(12px + var(--ion-safe-area-left, 0px));
-  margin-right: calc(12px + var(--ion-safe-area-right, 0px));
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.category-label {
-  display: block;
+/* White pill SAVE button */
+.save-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  padding: 6px 14px 6px 10px;
+  color: #fff;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--ion-color-medium);
-  margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background 0.15s;
 }
 
-.category-segment {
-  --background: var(--ion-color-light);
+.save-pill-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.save-pill-btn ion-icon {
+  font-size: 16px;
+}
+
+/* ── Cards ──────────────────────────── */
+.editor-card {
+  background: var(--c-surface);
+  border-radius: 16px;
+  margin: 14px 14px 0;
+  padding: 18px 16px;
+  border: 1px solid var(--c-border);
+}
+
+.chord-card {
+  padding-bottom: 12px;
+}
+
+/* ── Field groups ───────────────────── */
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text-3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.field-divider {
+  height: 1px;
+  background: var(--c-border);
+  margin: 14px 0;
+}
+
+.field-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--c-surface-2, #1e1e1e);
   border-radius: 10px;
+  border: 1px solid var(--c-border);
+  padding: 0 12px;
+  height: 46px;
 }
 
-.category-segment ion-segment-button {
-  --indicator-color: var(--ion-color-primary);
-  --color: var(--ion-color-medium);
-  --color-checked: white;
-  --border-radius: 8px;
-  min-height: 44px;
-  font-weight: 600;
-}
-
-/* Chord editor section */
-.chord-editor-section {
-  background: var(--ion-item-background);
-  border-radius: 12px;
-  margin: 16px 12px 0;
-  margin-left: calc(12px + var(--ion-safe-area-left, 0px));
-  margin-right: calc(12px + var(--ion-safe-area-right, 0px));
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.section-header .section-label {
-  margin-bottom: 0;
-}
-
-.key-selector {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--ion-color-light);
-  padding: 4px 8px 4px 12px;
-  border-radius: 8px;
-}
-
-.key-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ion-color-medium);
-}
-
-.key-select {
-  --padding-start: 8px;
+.field-input {
+  flex: 1;
+  --background: transparent;
+  --padding-start: 0;
   --padding-end: 0;
+  --color: var(--c-text);
+  --placeholder-color: var(--c-text-3);
+  --placeholder-opacity: 1;
   font-size: 15px;
+}
+
+.field-icon {
+  font-size: 18px;
+  color: var(--c-text-3);
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+/* ── Category pill chips ─────────────── */
+.category-pills {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.cat-pill {
+  padding: 9px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+  background: var(--c-surface-2, #1e1e1e);
+  border: 1.5px solid var(--c-border);
+  color: var(--c-text-2);
+}
+
+.cat-pill--active {
+  background: var(--c-purple, #7c3aed);
+  border-color: var(--c-purple, #7c3aed);
+  color: #fff;
+}
+
+.cat-pill:active {
+  filter: brightness(0.88);
+}
+
+/* ── Chord card header ──────────────── */
+.chord-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.chord-card-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.chord-card-title {
+  font-size: 12px;
   font-weight: 700;
-  color: var(--ion-color-primary);
-  min-width: 50px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text);
 }
 
-.key-select::part(text) {
+.chord-card-subtitle {
+  font-size: 12px;
+  color: var(--c-text-3);
+}
+
+/* ── KEY amber pill ─────────────────── */
+.key-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #2e2300;
+  border: 1.5px solid #5a4500;
+  border-radius: 999px;
+  padding: 5px 8px 5px 12px;
+}
+
+.key-pill-label {
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #d4b800;
+  text-transform: uppercase;
 }
 
-.key-select::part(icon) {
-  color: var(--ion-color-primary);
-  opacity: 0.7;
+.key-pill-select {
+  --color: #d4b800;
+  --padding-start: 0;
+  --padding-end: 0;
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 36px;
 }
 
-.section-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ion-color-medium);
-  margin-bottom: 12px;
+.key-pill-select::part(text) {
+  color: #d4b800;
+  font-weight: 700;
+  background: #d4b800;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #1a1100;
 }
 
-/* Save button */
-.save-btn-wrap {
-  padding: 20px 12px 40px;
-  padding-left: calc(12px + var(--ion-safe-area-left, 0px));
-  padding-right: calc(12px + var(--ion-safe-area-right, 0px));
-  padding-bottom: calc(40px + var(--ion-safe-area-bottom, 0px));
+.key-pill-select::part(icon) {
+  color: #d4b800;
 }
 
-/* Responsive adjustments */
-@media (max-width: 360px) {
-  .category-section,
-  .chord-editor-section {
-    margin: 12px 8px 0;
-    padding: 12px;
-  }
-
-  .category-segment ion-segment-button {
-    min-height: 40px;
-    font-size: 13px;
-  }
+/* ── Footer CTA ─────────────────────── */
+.editor-footer {
+  --background: transparent;
+  border-top: none;
+  padding: 10px 14px calc(10px + var(--ion-safe-area-bottom, 0px));
+  background: var(--c-bg);
 }
 
-/* Tablet / larger screens */
+.complete-btn {
+  width: 100%;
+  height: 54px;
+  background: var(--c-purple, #7c3aed);
+  border: none;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.complete-btn:active {
+  filter: brightness(0.88);
+}
+
+.complete-btn:disabled {
+  opacity: 0.6;
+}
+
+.complete-btn ion-icon {
+  font-size: 20px;
+}
+
+/* ── Responsive ─────────────────────── */
 @media (min-width: 768px) {
-  .editor-section,
-  .category-section,
-  .chord-editor-section,
-  .save-btn-wrap {
+  .editor-card,
+  .editor-footer {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;

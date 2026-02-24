@@ -2,23 +2,26 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   IonPage,
   IonHeader,
+  IonFooter,
   IonToolbar,
   IonTitle,
   IonContent,
   IonButtons,
   IonButton,
-  IonItem,
-  IonLabel,
   IonInput,
   IonIcon,
   IonToast,
   IonBackButton,
-  IonSegment,
-  IonSegmentButton,
   IonSelect,
   IonSelectOption,
 } from "@ionic/react";
-import { save } from "ionicons/icons";
+import {
+  save,
+  micOutline,
+  textOutline,
+  chevronDownOutline,
+  checkmarkOutline,
+} from "ionicons/icons";
 import { useHistory, useParams } from "react-router-dom";
 import { getSongById, saveSong, createSong } from "../utils/firebaseStorage";
 import { SongCategory } from "../types";
@@ -124,83 +127,98 @@ const SongEditor: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="primary">
+        <IonToolbar color="primary" className="editor-toolbar">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/home" text="" />
+            <IonBackButton defaultHref="/home" text="" color="light" />
           </IonButtons>
-          <IonTitle>{isNew ? "New Song" : "Edit Song"}</IonTitle>
+          <IonTitle className="editor-header-title">
+            {isNew ? "New Song" : "Edit Song"}
+          </IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={handleSave} strong>
-              <IonIcon slot="start" icon={save} />
-              Save
-            </IonButton>
+            <button className="save-pill-btn" onClick={handleSave}>
+              <IonIcon icon={save} />
+              <span>SAVE</span>
+            </button>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
       <IonContent className="editor-content">
-        {/* Song info */}
-        <div className="editor-section">
-          <IonItem className="editor-item">
-            <IonLabel position="stacked">Song Title *</IonLabel>
-            <IonInput
-              value={title}
-              onIonInput={(e) => setTitle(e.detail.value ?? "")}
-              placeholder="e.g. How Great Is Our God"
-              clearInput
-            />
-          </IonItem>
-          <IonItem className="editor-item">
-            <IonLabel position="stacked">Artist</IonLabel>
-            <IonInput
-              value={artist}
-              onIonInput={(e) => setArtist(e.detail.value ?? "")}
-              placeholder="e.g. Chris Tomlin"
-              clearInput
-            />
-          </IonItem>
+        {/* ── Song Title & Artist card ── */}
+        <div className="editor-card">
+          <div className="field-group">
+            <label className="field-label">SONG TITLE *</label>
+            <div className="field-input-wrap">
+              <IonInput
+                className="field-input"
+                value={title}
+                onIonInput={(e) => setTitle(e.detail.value ?? "")}
+                placeholder="e.g. How Great Is Our God"
+              />
+              <IonIcon icon={textOutline} className="field-icon" />
+            </div>
+          </div>
+
+          <div className="field-divider" />
+
+          <div className="field-group">
+            <label className="field-label">ARTIST</label>
+            <div className="field-input-wrap">
+              <IonInput
+                className="field-input"
+                value={artist}
+                onIonInput={(e) => setArtist(e.detail.value ?? "")}
+                placeholder="e.g. Chris Tomlin"
+              />
+              <IonIcon icon={micOutline} className="field-icon" />
+            </div>
+          </div>
         </div>
 
-        {/* Category selector */}
-        <div className="category-section">
-          <IonLabel className="category-label">Category *</IonLabel>
-          <IonSegment
-            value={category}
-            onIonChange={(e) => setCategory(e.detail.value as SongCategory)}
-            className="category-segment"
-          >
-            <IonSegmentButton value="praise">
-              <IonLabel>Praise</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="worship">
-              <IonLabel>Worship</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="other">
-              <IonLabel>Other</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
+        {/* ── Category card ── */}
+        <div className="editor-card">
+          <label className="field-label">CATEGORY *</label>
+          <div className="category-pills">
+            {(["praise", "worship", "other"] as SongCategory[]).map((cat) => (
+              <button
+                key={cat}
+                className={`cat-pill ${
+                  category === cat ? "cat-pill--active" : ""
+                }`}
+                onClick={() => setCategory(cat)}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Visual Chord Editor */}
-        <div className="chord-editor-section">
-          <div className="section-header">
-            <IonLabel className="section-label">Lyrics with Chords *</IonLabel>
-            <div className="key-selector">
-              <span className="key-label">Key:</span>
+        {/* ── Lyrics & Chords card ── */}
+        <div className="editor-card chord-card">
+          <div className="chord-card-header">
+            <div className="chord-card-titles">
+              <span className="chord-card-title">LYRICS &amp; CHORDS</span>
+              <span className="chord-card-subtitle">
+                Auto-formatting enabled
+              </span>
+            </div>
+            <div className="key-pill">
+              <span className="key-pill-label">KEY</span>
               <IonSelect
                 value={currentKey}
                 onIonChange={(e) => handleKeyChange(e.detail.value)}
                 interface="popover"
-                className="key-select"
+                className="key-pill-select"
               >
-                {ALL_KEYS.map((key) => (
-                  <IonSelectOption key={key} value={key}>
-                    {key}
+                {ALL_KEYS.map((k) => (
+                  <IonSelectOption key={k} value={k}>
+                    {k}
                   </IonSelectOption>
                 ))}
               </IonSelect>
             </div>
           </div>
+
           <VisualChordEditor
             value={lyrics}
             onChange={setLyrics}
@@ -208,18 +226,16 @@ const SongEditor: React.FC = () => {
           />
         </div>
 
-        <div className="save-btn-wrap">
-          <IonButton
-            onClick={handleSave}
-            size="large"
-            color="primary"
-            disabled={saving}
-          >
-            <IonIcon slot="start" icon={save} />
-            {saving ? "Saving…" : isNew ? "Save Song" : "Update Song"}
-          </IonButton>
-        </div>
+        <div style={{ height: 24 }} />
       </IonContent>
+
+      {/* ── Sticky footer CTA ── */}
+      <IonFooter className="editor-footer">
+        <button className="complete-btn" onClick={handleSave} disabled={saving}>
+          <IonIcon icon={checkmarkOutline} />
+          <span>{saving ? "Saving…" : "Complete Song"}</span>
+        </button>
+      </IonFooter>
 
       <IonToast
         isOpen={showToast}

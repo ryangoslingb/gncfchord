@@ -1,42 +1,25 @@
 /* SongView Styles - Modern Dark/Light Theme */
 
-/* ===== Theme Variables ===== */
-.song-view-page.dark-mode {
-  --sv-bg: #0d1117;
-  --sv-surface: #161b22;
-  --sv-surface-elevated: #21262d;
-  --sv-border: #30363d;
-  --sv-text-primary: #e6edf3;
-  --sv-text-secondary: #8b949e;
-  --sv-text-muted: #6e7681;
-  --sv-accent: #58a6ff;
-  --sv-accent-soft: rgba(88, 166, 255, 0.15);
-  --sv-chord-color: #79c0ff;
-  --sv-section-color: #ffa657;
-  --sv-btn-bg: #21262d;
-  --sv-btn-hover: #30363d;
-  --sv-btn-active: #58a6ff;
-  --sv-header-bg: #161b22;
-  --sv-toolbar-bg: #161b22;
-}
-
-.song-view-page.light-mode {
-  --sv-bg: #ffffff;
-  --sv-surface: #f6f8fa;
-  --sv-surface-elevated: #ffffff;
-  --sv-border: #d0d7de;
-  --sv-text-primary: #1f2328;
-  --sv-text-secondary: #57606a;
-  --sv-text-muted: #6e7781;
-  --sv-accent: #0969da;
-  --sv-accent-soft: rgba(9, 105, 218, 0.1);
-  --sv-chord-color: #0550ae;
-  --sv-section-color: #bf5700;
-  --sv-btn-bg: #f6f8fa;
-  --sv-btn-hover: #eaeef2;
-  --sv-btn-active: #0969da;
-  --sv-header-bg: #ffffff;
-  --sv-toolbar-bg: #f6f8fa;
+/* ===== Theme — always dark, uses design system tokens ===== */
+.song-view-page.dark-mode,
+.song-view-page.light-mode,
+.song-view-page {
+  --sv-bg: var(--c-bg);
+  --sv-surface: var(--c-surface);
+  --sv-surface-elevated: var(--c-surface-2);
+  --sv-border: var(--c-border);
+  --sv-text-primary: var(--c-text);
+  --sv-text-secondary: var(--c-text-2);
+  --sv-text-muted: var(--c-text-3);
+  --sv-accent: var(--c-purple);
+  --sv-accent-soft: var(--c-purple-dim);
+  --sv-chord-color: var(--c-yellow);
+  --sv-section-color: var(--c-purple);
+  --sv-btn-bg: var(--c-surface-2);
+  --sv-btn-hover: var(--c-surface-3);
+  --sv-btn-active: var(--c-purple);
+  --sv-header-bg: var(--c-surface);
+  --sv-toolbar-bg: var(--c-surface);
 }
 
 /* ===== Page Structure ===== */
@@ -236,7 +219,7 @@
   background: var(--sv-accent);
   color: white;
   border-color: var(--sv-accent);
-  box-shadow: 0 2px 8px rgba(88, 166, 255, 0.3);
+  box-shadow: 0 2px 8px var(--c-purple-dim);
 }
 
 /* ===== Content Area ===== */
@@ -455,13 +438,9 @@
   }
 }
 
-/* ===== Dark mode active key shadow ===== */
-.song-view-page.dark-mode .key-btn.active {
-  box-shadow: 0 2px 12px rgba(88, 166, 255, 0.4);
-}
-
-.song-view-page.light-mode .key-btn.active {
-  box-shadow: 0 2px 8px rgba(9, 105, 218, 0.3);
+/* ===== Active key shadow ===== */
+.song-view-page .key-btn.active {
+  box-shadow: 0 2px 12px var(--c-purple-dim);
 }
 
 /* ===== Smooth transitions ===== */

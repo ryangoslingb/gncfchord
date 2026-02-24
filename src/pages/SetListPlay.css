@@ -1,36 +1,22 @@
 /* SetListPlay - Presentation Mode */
 /* Matches SongView design system */
 
-/* ===== Dark Mode Theme ===== */
-.setlist-play-page.dark-mode {
-  --sv-bg: #0d1117;
-  --sv-surface: #161b22;
-  --sv-surface-elevated: #1c2128;
-  --sv-border: #30363d;
-  --sv-text-primary: #e6edf3;
-  --sv-text-secondary: #8b949e;
-  --sv-accent: #58a6ff;
-  --sv-chord-color: #79c0ff;
-  --sv-section-color: #ffa657;
-  --sv-btn-bg: #21262d;
-  --sv-btn-hover: #30363d;
-  --sv-toolbar-bg: #161b22;
-}
-
-/* ===== Light Mode Theme ===== */
-.setlist-play-page.light-mode {
-  --sv-bg: #ffffff;
-  --sv-surface: #f6f8fa;
-  --sv-surface-elevated: #ffffff;
-  --sv-border: #d0d7de;
-  --sv-text-primary: #1f2328;
-  --sv-text-secondary: #656d76;
-  --sv-accent: #0969da;
-  --sv-chord-color: #0550ae;
-  --sv-section-color: #9a6700;
-  --sv-btn-bg: #f6f8fa;
-  --sv-btn-hover: #eaeef2;
-  --sv-toolbar-bg: #f6f8fa;
+/* ===== Theme — always dark, uses design system tokens ===== */
+.setlist-play-page.dark-mode,
+.setlist-play-page.light-mode,
+.setlist-play-page {
+  --sv-bg: var(--c-bg);
+  --sv-surface: var(--c-surface);
+  --sv-surface-elevated: var(--c-surface-2);
+  --sv-border: var(--c-border);
+  --sv-text-primary: var(--c-text);
+  --sv-text-secondary: var(--c-text-2);
+  --sv-accent: var(--c-purple);
+  --sv-chord-color: var(--c-yellow);
+  --sv-section-color: var(--c-purple);
+  --sv-btn-bg: var(--c-surface-2);
+  --sv-btn-hover: var(--c-surface-3);
+  --sv-toolbar-bg: var(--c-surface);
 }
 
 /* ===== Header ===== */

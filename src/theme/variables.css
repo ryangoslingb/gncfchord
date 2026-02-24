@@ -1,70 +1,132 @@
-/* ChordShift – Modern Theme System */
+/* ═══════════════════════════════════════════════
+   GNCF MUSIC TEAM — Design System Token Layer
+   Treat this file as the single source of truth.
+   Components must ONLY reference tokens, never
+   raw color/size values.
+═══════════════════════════════════════════════ */
 
 :root {
-  /* Primary: Blue accent for actions */
-  --ion-color-primary: #0969da;
-  --ion-color-primary-rgb: 9, 105, 218;
+  /* ── Color: Backgrounds (elevation via lightness) ── */
+  --c-bg: #0a0a0a; /* page base — deepest black */
+  --c-surface: #141414; /* level 1 — toolbar, nav */
+  --c-surface-2: #1c1c1c; /* level 2 — cards, items */
+  --c-surface-3: #242424; /* level 3 — hover states */
+  --c-border: rgba(255, 255, 255, 0.07);
+
+  /* ── Color: Brand ── */
+  --c-purple: #8b5cf6; /* primary action — violet-500 */
+  --c-purple-dim: rgba(139, 92, 246, 0.14);
+  --c-yellow: #eab308; /* highlight — yellow-500 */
+  --c-yellow-dim: rgba(234, 179, 8, 0.14);
+
+  /* ── Color: Semantic ── */
+  --c-success: #22c55e;
+  --c-danger: #ef4444;
+  --c-warning: #f59e0b;
+
+  /* ── Color: Text ── */
+  --c-text: #f5f5f5; /* body text */
+  --c-text-2: #a3a3a3; /* secondary / metadata */
+  --c-text-3: #525252; /* placeholder / disabled */
+
+  /* ── Typography: Scale ── */
+  --fs-xs: 0.75rem; /* 12px — timestamps, badges */
+  --fs-sm: 0.8125rem; /* 13px — labels, captions */
+  --fs-base: 0.9375rem; /* 15px — body / list items */
+  --fs-md: 1rem; /* 16px — primary content */
+  --fs-lg: 1.125rem; /* 18px — section/card titles */
+  --fs-xl: 1.375rem; /* 22px — page titles */
+  --fs-2xl: 1.75rem; /* 28px — hero headings */
+
+  /* ── Typography: Weight ── */
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 800;
+
+  /* ── Spacing: 8px grid ── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+
+  /* ── Radius ── */
+  --r-sm: 6px; /* list rows */
+  --r-md: 10px; /* cards */
+  --r-lg: 16px; /* bottom sheets */
+  --r-full: 9999px; /* pills, FAB */
+
+  /* ── Transition ── */
+  --ease: 0.18s ease;
+
+  /* ── Ionic variable overrides ── */
+  --ion-color-primary: var(--c-purple);
+  --ion-color-primary-rgb: 139, 92, 246;
   --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #0858bf;
-  --ion-color-primary-tint: #2278de;
+  --ion-color-primary-shade: #7c3aed;
+  --ion-color-primary-tint: #a78bfa;
 
-  --ion-color-secondary: #1f883d;
-  --ion-color-secondary-rgb: 31, 136, 61;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #1c7736;
-  --ion-color-secondary-tint: #359451;
+  --ion-color-secondary: var(--c-yellow);
+  --ion-color-secondary-rgb: 234, 179, 8;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-shade: #ca8a04;
+  --ion-color-secondary-tint: #fbbf24;
 
-  --ion-color-success: #1a7f37;
-  --ion-color-warning: #9a6700;
-  --ion-color-danger: #cf222e;
-  --ion-color-medium: #656d76;
-  --ion-color-light: #f6f8fa;
+  --ion-color-tertiary: #a78bfa;
+  --ion-color-tertiary-rgb: 167, 139, 250;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-shade: #8b5cf6;
+  --ion-color-tertiary-tint: #c4b5fd;
 
-  /* Light mode defaults */
-  --ion-background-color: #ffffff;
-  --ion-background-color-rgb: 255, 255, 255;
-  --ion-text-color: #1f2328;
-  --ion-text-color-rgb: 31, 35, 40;
-  --ion-toolbar-background: #ffffff;
-  --ion-item-background: #ffffff;
-  --ion-card-background: #ffffff;
-  --ion-border-color: #d0d7de;
+  --ion-color-success: var(--c-success);
+  --ion-color-danger: var(--c-danger);
+  --ion-color-warning: var(--c-warning);
+  --ion-color-medium: var(--c-text-2);
+  --ion-color-light: var(--c-surface-2);
+  --ion-color-light-rgb: 28, 28, 28;
+  --ion-color-light-shade: var(--c-surface);
+  --ion-color-light-tint: var(--c-surface-3);
 
-  /* Font */
+  --ion-background-color: var(--c-bg);
+  --ion-background-color-rgb: 10, 10, 10;
+  --ion-text-color: var(--c-text);
+  --ion-text-color-rgb: 245, 245, 245;
+  --ion-toolbar-background: var(--c-surface);
+  --ion-item-background: var(--c-surface-2);
+  --ion-card-background: var(--c-surface-2);
+  --ion-border-color: var(--c-border);
+
   --ion-font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Roboto", system-ui,
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "Inter",
     sans-serif;
 
-  /* Safe area insets for notched phones */
   --ion-safe-area-top: env(safe-area-inset-top);
   --ion-safe-area-bottom: env(safe-area-inset-bottom);
   --ion-safe-area-left: env(safe-area-inset-left);
   --ion-safe-area-right: env(safe-area-inset-right);
 }
 
-/* Dark mode overrides (system preference) */
-@media (prefers-color-scheme: dark) {
+/* Force dark always — no light mode exceptions */
+@media (prefers-color-scheme: light) {
   :root {
-    --ion-color-primary: #58a6ff;
-    --ion-color-primary-rgb: 88, 166, 255;
-
-    --ion-background-color: #0d1117;
-    --ion-background-color-rgb: 13, 17, 23;
-    --ion-text-color: #e6edf3;
-    --ion-text-color-rgb: 230, 237, 243;
-    --ion-toolbar-background: #161b22;
-    --ion-item-background: #161b22;
-    --ion-card-background: #161b22;
-    --ion-border-color: #30363d;
-    --ion-color-light: #21262d;
-    --ion-color-light-shade: #30363d;
-    --ion-color-medium: #8b949e;
+    --ion-background-color: var(--c-bg);
+    --ion-background-color-rgb: 10, 10, 10;
+    --ion-text-color: var(--c-text);
+    --ion-toolbar-background: var(--c-surface);
+    --ion-item-background: var(--c-surface-2);
+    --ion-card-background: var(--c-surface-2);
+    --ion-border-color: var(--c-border);
+    --ion-color-light: var(--c-surface-2);
+    --ion-color-medium: var(--c-text-2);
   }
 }
 
-/* ── Global responsive utilities ─────── */
+/* ── Global resets & utilities ── */
 html {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
@@ -75,21 +137,41 @@ html {
   -webkit-user-drag: none;
 }
 
-/* Prevent pull-to-refresh on iOS */
 ion-content {
   --overflow: auto;
   overscroll-behavior-y: contain;
 }
 
-/* Ensure minimum touch target size */
+/* Consistent minimum touch target */
 ion-button,
 ion-item,
 ion-fab-button {
   min-height: 44px;
 }
 
-/* Smooth scrolling */
 ion-content::part(scroll) {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Shared pill/chip utility */
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--r-full);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tag-pill.praise {
+  background: var(--c-yellow-dim);
+  color: var(--c-yellow);
+}
+
+.tag-pill.worship {
+  background: var(--c-purple-dim);
+  color: var(--c-purple);
 }

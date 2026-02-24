@@ -1,25 +1,14 @@
 import React, { useState } from "react";
+import { IonPage, IonContent, IonSpinner, IonIcon } from "@ionic/react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonButton,
-  IonText,
-  IonSpinner,
-  IonIcon,
-  IonButtons,
-  IonBackButton,
-} from "@ionic/react";
-import {
-  personAddOutline,
+  musicalNotesOutline,
+  personOutline,
   mailOutline,
   lockClosedOutline,
-  personOutline,
+  eyeOutline,
+  eyeOffOutline,
+  arrowForwardOutline,
+  chevronBackOutline,
 } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -30,6 +19,8 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [showCpw, setShowCpw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -40,22 +31,18 @@ const Register: React.FC = () => {
     e.preventDefault();
     setError("");
 
-    // Validation
     if (!displayName || !email || !password || !confirmPassword) {
       setError("Please fill in all fields");
       return;
     }
-
     if (displayName.length < 2) {
       setError("Name must be at least 2 characters");
       return;
     }
-
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
-
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -83,100 +70,164 @@ const Register: React.FC = () => {
 
   return (
     <IonPage className="auth-page">
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/login" text="" />
-          </IonButtons>
-          <IonTitle>Create Account</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <IonContent fullscreen scrollY className="auth-content">
+        {/* Background glow orbs */}
+        <div className="auth-glow auth-glow--1" />
+        <div className="auth-glow auth-glow--2" />
 
-      <IonContent className="ion-padding">
         <div className="auth-container">
-          <div className="auth-logo">
-            <IonIcon icon={personAddOutline} />
-            <h1>Join ChordShift</h1>
-            <p>Create your free account</p>
+          {/* ── Back button ── */}
+          <div className="auth-back-row">
+            <button
+              className="auth-back-btn"
+              onClick={() => history.push("/login")}
+              disabled={loading}
+            >
+              <IonIcon icon={chevronBackOutline} />
+              <span>Back to Sign In</span>
+            </button>
           </div>
 
-          <form onSubmit={handleRegister} className="auth-form">
+          {/* ── Hero ── */}
+          <div className="auth-hero">
+            <div className="auth-icon-wrap">
+              <IonIcon icon={musicalNotesOutline} className="auth-main-icon" />
+            </div>
+            <h1 className="auth-app-name">Create Account</h1>
+            <p className="auth-tagline">Join GNCFMusicTeam for free</p>
+          </div>
+
+          {/* ── Card ── */}
+          <div className="auth-card">
             {error && (
               <div className="auth-error">
-                <IonText color="danger">{error}</IonText>
+                <span>{error}</span>
               </div>
             )}
 
-            <IonItem className="auth-input">
-              <IonIcon icon={personOutline} slot="start" />
-              <IonInput
-                id="register-name"
-                type="text"
-                placeholder="Display Name"
-                value={displayName}
-                onIonInput={(e) => setDisplayName(e.detail.value || "")}
+            <form onSubmit={handleRegister} className="auth-form">
+              {/* Name */}
+              <div className="auth-field">
+                <label className="auth-field-label">DISPLAY NAME</label>
+                <div className="auth-field-wrap">
+                  <IonIcon icon={personOutline} className="auth-field-icon" />
+                  <input
+                    className="auth-field-input"
+                    type="text"
+                    placeholder="Your name"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    disabled={loading}
+                    autoComplete="name"
+                  />
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="auth-field">
+                <label className="auth-field-label">EMAIL</label>
+                <div className="auth-field-wrap">
+                  <IonIcon icon={mailOutline} className="auth-field-icon" />
+                  <input
+                    className="auth-field-input"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                    autoComplete="email"
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="auth-field">
+                <label className="auth-field-label">PASSWORD</label>
+                <div className="auth-field-wrap">
+                  <IonIcon
+                    icon={lockClosedOutline}
+                    className="auth-field-icon"
+                  />
+                  <input
+                    className="auth-field-input"
+                    type={showPw ? "text" : "password"}
+                    placeholder="Min. 6 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="auth-pw-toggle"
+                    onClick={() => setShowPw((v) => !v)}
+                    tabIndex={-1}
+                  >
+                    <IonIcon icon={showPw ? eyeOffOutline : eyeOutline} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div className="auth-field">
+                <label className="auth-field-label">CONFIRM PASSWORD</label>
+                <div className="auth-field-wrap">
+                  <IonIcon
+                    icon={lockClosedOutline}
+                    className="auth-field-icon"
+                  />
+                  <input
+                    className="auth-field-input"
+                    type={showCpw ? "text" : "password"}
+                    placeholder="Repeat password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={loading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="auth-pw-toggle"
+                    onClick={() => setShowCpw((v) => !v)}
+                    tabIndex={-1}
+                  >
+                    <IonIcon icon={showCpw ? eyeOffOutline : eyeOutline} />
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 8 }} />
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="auth-submit-btn"
                 disabled={loading}
-              />
-            </IonItem>
+              >
+                {loading ? (
+                  <IonSpinner name="crescent" />
+                ) : (
+                  <>
+                    <span>Create Account</span>
+                    <IonIcon icon={arrowForwardOutline} />
+                  </>
+                )}
+              </button>
+            </form>
 
-            <IonItem className="auth-input">
-              <IonIcon icon={mailOutline} slot="start" />
-              <IonInput
-                id="register-email"
-                type="email"
-                placeholder="Email"
-                value={email}
-                onIonInput={(e) => setEmail(e.detail.value || "")}
-                disabled={loading}
-              />
-            </IonItem>
-
-            <IonItem className="auth-input">
-              <IonIcon icon={lockClosedOutline} slot="start" />
-              <IonInput
-                id="register-password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onIonInput={(e) => setPassword(e.detail.value || "")}
-                disabled={loading}
-              />
-            </IonItem>
-
-            <IonItem className="auth-input">
-              <IonIcon icon={lockClosedOutline} slot="start" />
-              <IonInput
-                id="register-confirm-password"
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onIonInput={(e) => setConfirmPassword(e.detail.value || "")}
-                disabled={loading}
-              />
-            </IonItem>
-
-            <IonButton
-              expand="block"
-              type="submit"
-              className="auth-button"
-              disabled={loading}
-            >
-              {loading ? <IonSpinner name="crescent" /> : "Create Account"}
-            </IonButton>
-
+            {/* Divider */}
             <div className="auth-divider">
               <span>Already have an account?</span>
             </div>
 
-            <IonButton
-              expand="block"
-              fill="outline"
-              routerLink="/login"
-              className="auth-button-secondary"
+            <button
+              className="auth-register-btn"
+              onClick={() => history.push("/login")}
+              disabled={loading}
             >
-              Login
-            </IonButton>
-          </form>
+              Sign In
+            </button>
+          </div>
         </div>
       </IonContent>
     </IonPage>
