@@ -101,6 +101,18 @@ const SetListView: React.FC = () => {
     return globalIndex + songIndexInSection;
   };
 
+  // Handle section reorder
+  const handleSectionReorder = (event: CustomEvent<ItemReorderEventDetail>) => {
+    if (!setList) return;
+    const sections = [...setList.sections];
+    const [movedSection] = sections.splice(event.detail.from, 1);
+    sections.splice(event.detail.to, 0, movedSection);
+    const updatedSetList = { ...setList, sections };
+    setSetList(updatedSetList);
+    saveSetList(updatedSetList).catch(console.error);
+    event.detail.complete();
+  };
+
   // Handle reorder within a section
   const handleReorder = (
     sectionId: string,
@@ -375,7 +387,9 @@ const SetListView: React.FC = () => {
         {isReordering && (
           <div className="reorder-hint">
             <IonIcon icon={reorderThreeOutline} />
-            <span>Drag songs to reorder. Tap the icon again when done.</span>
+            <span>
+              Drag songs or sections to reorder. Tap the icon again when done.
+            </span>
           </div>
         )}
 
@@ -392,64 +406,71 @@ const SetListView: React.FC = () => {
             </IonButton>
           </div>
         ) : (
-          setList.sections.map((section) => (
-            <div key={section.id} className="section-block">
-              <div className="section-title">
-                <span>{section.name}</span>
-                <IonBadge color="primary">{section.songIds.length}</IonBadge>
-              </div>
-
-              {section.songIds.length === 0 ? (
-                <div className="empty-section">
-                  <p>No songs in this section</p>
+          <IonReorderGroup
+            disabled={!isReordering}
+            onIonItemReorder={handleSectionReorder}
+          >
+            {setList.sections.map((section) => (
+              <div key={section.id} className="section-block">
+                <div className="section-title">
+                  <span>{section.name}</span>
+                  <IonBadge color="primary">{section.songIds.length}</IonBadge>
+                  {isReordering && <IonReorder slot="end" />}
                 </div>
-              ) : (
-                <IonList className="song-list">
-                  <IonReorderGroup
-                    disabled={!isReordering}
-                    onIonItemReorder={(e) => handleReorder(section.id, e)}
-                  >
-                    {section.songIds.map((songId, index) => {
-                      const song = getSongDetails(songId);
-                      if (!song) return null;
-                      const sectionIndex = setList.sections.findIndex(
-                        (s) => s.id === section.id,
-                      );
 
-                      return (
-                        <IonItem
-                          key={songId}
-                          button={!isReordering}
-                          detail={!isReordering}
-                          onClick={() =>
-                            !isReordering && startPlayMode(sectionIndex, index)
-                          }
-                          className="song-item"
-                        >
-                          <div className="song-number" slot="start">
-                            {index + 1}
-                          </div>
-                          <IonLabel>
-                            <h2>{song.title}</h2>
-                            {song.artist && <p>{song.artist}</p>}
-                          </IonLabel>
-                          {isReordering ? (
-                            <IonReorder slot="end" />
-                          ) : (
-                            <IonIcon
-                              icon={playOutline}
-                              slot="end"
-                              color="primary"
-                            />
-                          )}
-                        </IonItem>
-                      );
-                    })}
-                  </IonReorderGroup>
-                </IonList>
-              )}
-            </div>
-          ))
+                {section.songIds.length === 0 ? (
+                  <div className="empty-section">
+                    <p>No songs in this section</p>
+                  </div>
+                ) : (
+                  <IonList className="song-list">
+                    <IonReorderGroup
+                      disabled={!isReordering}
+                      onIonItemReorder={(e) => handleReorder(section.id, e)}
+                    >
+                      {section.songIds.map((songId, index) => {
+                        const song = getSongDetails(songId);
+                        if (!song) return null;
+                        const sectionIndex = setList.sections.findIndex(
+                          (s) => s.id === section.id,
+                        );
+
+                        return (
+                          <IonItem
+                            key={songId}
+                            button={!isReordering}
+                            detail={!isReordering}
+                            onClick={() =>
+                              !isReordering &&
+                              startPlayMode(sectionIndex, index)
+                            }
+                            className="song-item"
+                          >
+                            <div className="song-number" slot="start">
+                              {index + 1}
+                            </div>
+                            <IonLabel>
+                              <h2>{song.title}</h2>
+                              {song.artist && <p>{song.artist}</p>}
+                            </IonLabel>
+                            {isReordering ? (
+                              <IonReorder slot="end" />
+                            ) : (
+                              <IonIcon
+                                icon={playOutline}
+                                slot="end"
+                                color="primary"
+                              />
+                            )}
+                          </IonItem>
+                        );
+                      })}
+                    </IonReorderGroup>
+                  </IonList>
+                )}
+              </div>
+            ))}
+          </IonReorderGroup>
         )}
 
         <div style={{ height: 40 }} />
