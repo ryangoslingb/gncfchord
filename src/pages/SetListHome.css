@@ -11,6 +11,24 @@
   --padding-bottom: calc(var(--sp-10) + var(--ion-safe-area-bottom, 0px));
 }
 
+/* ── Search bar ────────────────────── */
+.setlist-search {
+  padding: var(--sp-3);
+  padding-left: calc(var(--sp-3) + var(--ion-safe-area-left, 0px));
+  padding-right: calc(var(--sp-3) + var(--ion-safe-area-right, 0px));
+}
+
+.setlist-search ion-searchbar {
+  --background: var(--c-surface-2);
+  --color: var(--c-text);
+  --placeholder-color: var(--c-text-3);
+  --icon-color: var(--c-text-3);
+  --clear-button-color: var(--c-text-2);
+  --box-shadow: none;
+  --border-radius: var(--r-md);
+  border: 1px solid var(--c-border);
+}
+
 /* ── Toolbar ────────────────────────── */
 .setlist-home-title {
   display: flex;
@@ -61,6 +79,64 @@
 .setlist-list {
   background: transparent;
   padding-bottom: calc(var(--sp-10) + var(--ion-safe-area-bottom, 0px));
+}
+
+/* ── Month grouping ────────────────── */
+.setlist-month-group {
+  margin-top: var(--sp-3);
+}
+
+.setlist-month-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-2) var(--sp-3);
+  padding-left: calc(var(--sp-3) + var(--ion-safe-area-left, 0px));
+  padding-right: calc(var(--sp-3) + var(--ion-safe-area-right, 0px));
+  border: none;
+  background: transparent;
+  color: var(--c-text);
+  cursor: pointer;
+}
+
+.setlist-month-header:active {
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+}
+
+.month-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.month-header-icon {
+  font-size: var(--fs-lg);
+  color: var(--c-purple);
+}
+
+.month-header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.month-header-title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text);
+}
+
+.month-header-count {
+  font-size: var(--fs-xs);
+  color: var(--c-text-2);
+}
+
+.month-header-chevron {
+  font-size: var(--fs-lg);
+  color: var(--c-text-2);
 }
 
 .setlist-item {

@@ -67,6 +67,46 @@
   border-bottom: 1px solid var(--sv-border);
 }
 
+/* ===== Section Navigation ===== */
+.setlist-play-page .section-nav {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--sv-surface);
+  border-bottom: 1px solid var(--sv-border);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.setlist-play-page .section-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.setlist-play-page .section-nav {
+  scrollbar-width: none;
+}
+
+.setlist-play-page .section-nav-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--sv-border);
+  background: var(--sv-btn-bg);
+  color: var(--sv-text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setlist-play-page .section-nav-btn:active {
+  transform: scale(0.96);
+  background: var(--sv-btn-hover);
+}
+
 .setlist-play-page .key-badge {
   background: var(--sv-accent);
   color: #ffffff;

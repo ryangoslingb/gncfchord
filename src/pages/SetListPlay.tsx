@@ -59,9 +59,38 @@ function autoFlats(semitone: number): boolean {
   return FLAT_SEMITONES.has(((semitone % 12) + 12) % 12);
 }
 
-function isSectionMarker(text: string): boolean {
+function getSectionLabel(text: string): string | null {
   const trimmed = text.trim();
-  return /^\[.+\]$/.test(trimmed) && !/^\[[A-G][#b]?/.test(trimmed);
+  if (!trimmed) return null;
+
+  const bracketMatch = trimmed.match(/^\[(.+)\]$/);
+  if (bracketMatch && !/^\[[A-G][#b]?/.test(trimmed)) {
+    const label = bracketMatch[1].trim();
+    return label || "Section";
+  }
+
+  const plainMatch = trimmed.match(
+    /^(intro|verse|pre-?chorus|chorus|bridge|tag|outro|ending|refrain|interlude|breakdown)(\s*\d+)?$/i,
+  );
+  if (plainMatch) return trimmed;
+
+  return null;
+}
+
+function getSectionLabelFromLine(line: ParsedLine): string | null {
+  const text = line.tokens.map((t) => t.text).join("");
+  const plainLabel = getSectionLabel(text);
+  if (plainLabel) return plainLabel;
+
+  if (!text.trim()) {
+    const chordLabels = line.tokens.map((t) => t.chord).filter(Boolean);
+    if (chordLabels.length === 1) {
+      const chordLabel = getSectionLabel(chordLabels[0]);
+      if (chordLabel) return chordLabel;
+    }
+  }
+
+  return null;
 }
 
 // Lyrics Line Component
@@ -69,15 +98,22 @@ const LyricsLine: React.FC<{ line: ParsedLine; fontSize: number }> = ({
   line,
   fontSize,
 }) => {
+  const text = line.tokens.map((t) => t.text).join("");
+  const sectionLabel = getSectionLabelFromLine(line);
   if (!line.hasChords) {
-    const text = line.tokens.map((t) => t.text).join("");
-    const isSection = isSectionMarker(text);
     return (
       <div
-        className={`lyrics-plain-line ${isSection ? "section-marker" : ""}`}
+        className={`lyrics-plain-line ${sectionLabel ? "section-marker" : ""}`}
         style={{ fontSize }}
       >
         {text === "" ? <span>&nbsp;</span> : text}
+      </div>
+    );
+  }
+  if (sectionLabel && !text.trim()) {
+    return (
+      <div className="lyrics-plain-line section-marker" style={{ fontSize }}>
+        {sectionLabel}
       </div>
     );
   }
@@ -321,6 +357,30 @@ const SetListPlay: React.FC = () => {
     [transposedLyrics],
   );
 
+  const sectionMarkers = useMemo(() => {
+    const markers: { id: string; label: string }[] = [];
+    parsedLines.forEach((line, index) => {
+      const label = getSectionLabelFromLine(line);
+      if (!label) return;
+      markers.push({ id: `section-${index}`, label });
+    });
+    return markers;
+  }, [parsedLines]);
+
+  const scrollToSection = async (targetId: string) => {
+    const content = contentRef.current;
+    if (!content) return;
+    const scrollEl = await content.getScrollElement();
+    const target = document.getElementById(targetId);
+    if (!scrollEl || !target) return;
+    const top =
+      scrollEl.scrollTop +
+      target.getBoundingClientRect().top -
+      scrollEl.getBoundingClientRect().top -
+      12;
+    content.scrollToPoint(0, Math.max(0, top), 300);
+  };
+
   const handleTranspose = (delta: number) => {
     const newShift = semitoneShift + delta;
     const newSemitone =
@@ -469,11 +529,31 @@ const SetListPlay: React.FC = () => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        {sectionMarkers.length > 0 && (
+          <div className="section-nav">
+            {sectionMarkers.map((marker) => (
+              <button
+                key={marker.id}
+                className="section-nav-btn"
+                onClick={() => scrollToSection(marker.id)}
+              >
+                {marker.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Lyrics */}
         <div className="lyrics-container" style={{ fontSize }}>
-          {parsedLines.map((line, idx) => (
-            <LyricsLine key={idx} line={line} fontSize={fontSize} />
-          ))}
+          {parsedLines.map((line, idx) => {
+            const sectionLabel = getSectionLabelFromLine(line);
+            const sectionId = sectionLabel ? `section-${idx}` : undefined;
+            return (
+              <div key={idx} id={sectionId}>
+                <LyricsLine line={line} fontSize={fontSize} />
+              </div>
+            );
+          })}
         </div>
 
         {/* Swipe hint */}
