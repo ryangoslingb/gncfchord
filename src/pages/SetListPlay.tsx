@@ -147,6 +147,7 @@ const SetListPlay: React.FC = () => {
   const scrollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+  const touchMoved = useRef(false);
 
   const [setList, setSetList] = useState<SetList | null>(null);
   const [songMap, setSongMap] = useState<Record<string, Song>>({});
@@ -275,13 +276,21 @@ const SetListPlay: React.FC = () => {
   // Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = touchStartX.current;
+    touchMoved.current = false;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.touches[0].clientX;
+    touchMoved.current = true;
   };
 
   const handleTouchEnd = () => {
+    if (!touchMoved.current) {
+      touchStartX.current = 0;
+      touchEndX.current = 0;
+      return;
+    }
     const diff = touchStartX.current - touchEndX.current;
     const threshold = 80;
 
